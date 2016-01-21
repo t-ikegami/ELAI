@@ -1,0 +1,35 @@
+#!/bin/sh
+CC=mpic++
+FC=mpif90
+N="${N-2}"
+if test -f $TARGET.cc
+then
+  echo "  >>> COMPILE[ $TARGET ] BEG <<<"
+  $CC -DELAI_USE_MPI -DELAI_USE_MUMPS -DELAI_DEBUG -c $TARGET.cc -I../Elai -I$PREFIX/include
+  $FC -nofor-main -o $TARGET $TARGET.o -L$PREFIX/lib -ldmumps -lmumps_common -lscalapack -lmkl_rt -lmetis -lpord -lstdc++
+  ret=$?
+  echo "  >>> COMPILE[ $TARGET ] END <<<"
+  if test 0 -eq $ret
+  then
+    echo "!!    COMPILE SUCCEEDED"
+    echo
+    echo "  >>> CHECK[ $TARGET ] BEG <<<"
+    mpiexec -n $N ./$TARGET
+    ret=$?
+    rm $TARGET $TARGET.o
+    echo "  >>> CHECK[ $TARGET ] END <<<"
+    if test 0 -eq $ret
+    then
+      echo "!!    CHECK SUCCEEDED"
+      echo
+    else
+      echo "!!    CHECK FAILED"
+      echo
+      exit 1
+    fi
+  else
+    echo "!!    COMPILE FAILED"
+    echo
+    exit 1
+  fi
+fi

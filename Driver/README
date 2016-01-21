@@ -1,0 +1,23 @@
+BUILD:
+  Before you make the driver, you must specify the environments: ELAI_INC and ELAI_LIB.
+
+PROBLEM:
+  A1.mtx b1.mtx -- Easy
+  A2.mtx b2.mtx -- Hard, ordering is not for DDM
+
+PARAMETER:
+  CTHRES -- Convergence Threshold
+  FTHRES -- Fillin cut-off Threshold
+  STHRES -- Scaling Threshold
+  KSP    -- Krylov sub-SPace Method
+
+KSP:
+  BCGS   -- BiCGStab
+  SBCGS  -- Scaled BiCGStab
+  PBCGS  -- Preconditioned BiCGStab
+  SPBCGS -- Scaled & Preconditioned BiCGStab
+  BCGSA  -- BiCGSafe
+  SBCGSA -- Scaled BiCGSafe
+  PBCGSA -- Preconditioned BiCGSafe
+  SPBCGSA-- Scaled & Preconditioned BiCGSafe
+  LU     -- MUMPS

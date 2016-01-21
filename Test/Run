@@ -1,0 +1,97 @@
+#!/bin/sh
+
+check()
+{
+  ./runTest
+  if test 0 -ne $?
+  then
+    exit 1
+  fi
+}
+
+checkMPI()
+{
+  N=$1 ./runMpi
+  if test 0 -ne $?
+  then
+    exit 1
+  fi
+}
+
+checkMETIS()
+{
+  if [ -z "${PREFIX+x}" ];
+  then
+    echo "SET \$PREFIX=YOUR_INSTALLED_DIRECTORY"
+    exit 1
+  fi
+  ./runMetis
+  if test 0 -ne $?
+  then
+    exit 1
+  fi
+}
+
+checkMUMPS()
+{
+  if [ -z "${PREFIX+x}" ];
+  then
+    echo "SET \$PREFIX=YOUR_INSTALLED_DIRECTORY"
+    exit 1
+  fi
+  N=$1 ./runMumps
+  if test 0 -ne $?
+  then
+    exit 1
+  fi
+}
+
+TARGET=spaceTest check
+TARGET=familyTest check
+TARGET=mergeTest check
+TARGET=subjugatorTest check
+TARGET=vectorTest check
+TARGET=matrixTest check
+TARGET=scalingTest check
+TARGET=fillinTest check
+TARGET=blasTest check
+TARGET=linear_functionTest check
+TARGET=linear_operatorTest check
+TARGET=jacobiTest check
+TARGET=sorTest check
+TARGET=cgTest check
+TARGET=bicgstabTest check
+TARGET=bicgsafeTest check
+TARGET=jacobi_conditionerTest check
+TARGET=sor_conditionerTest check
+TARGET=icTest check
+TARGET=iluTest check
+TARGET=coherenceTest checkMPI 2
+TARGET=portalTest1 checkMPI 2
+TARGET=portalTest2 checkMPI 2
+TARGET=dcTest checkMPI 2
+TARGET=ddcTest checkMPI 4
+TARGET=ddc2Test checkMPI 4
+TARGET=extendTest checkMPI 2
+TARGET=entireTest0 check
+TARGET=entireTest1 checkMPI 2
+TARGET=entireTest2 checkMPI 4
+diff A.mtx entire.mtx
+if test 0 -ne $?
+then
+  echo "NOT MATCHED!!"
+  exit 1
+fi
+rm entire.mtx
+TARGET=entireTest3 checkMPI 4
+diff A.mtx entire.mtx
+if test 0 -ne $?
+then
+  echo "NOT MATCHED!!"
+  exit 1
+fi
+rm entire.mtx
+TARGET=metisTest checkMETIS
+TARGET=luTest checkMUMPS 3
+
+echo "CONGRATURATIONS!! ALL TESTS SUCCEEDED!!"

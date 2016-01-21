@@ -1,0 +1,143 @@
+#!/bin/bash
+
+ELAI_VERSION=0.6.2
+PROGNAME=$(basename $0)
+PREFIX=/usr/local
+COMPILER=intel
+NOMKL=0
+
+usage()
+{
+  echo "Usage: $PROGNAME [OPTIONS] FILE"
+  echo
+  echo "Options:"
+  echo "  -h, --help"
+  echo "  -p, --prefix"
+  echo "  -c, --compiler"
+  echo "  --nomkl"
+  echo
+  exit 1
+}
+
+check()
+{
+  if test 0 -ne $1
+  then
+    echo
+    echo ">>> $3 [ $2 ] SOMETHINGS WRONG <<<"
+    echo
+    exit 1
+  fi
+}
+
+nomkl()
+{
+  NOMKL=1
+}
+
+for OPT in "$@"
+do
+  case "$OPT" in
+    '-h'|'--help' )
+      usage
+      ;;
+    '-p'|'--prefix' )
+      PREFIX="$2"
+      shift 2
+      ;;
+    '-c'|'--compiler' )
+      COMPILER="$2"
+      shift 2
+      ;;
+    '--nomkl' )
+      nomkl
+      ;;
+  esac
+done
+
+cat << END
+
+  Install the ELAI ver.$ELAI_VERSION
+
+END
+
+mkdir -p $PREFIX
+mkdir -p $PREFIX/include
+mkdir -p $PREFIX/lib
+cd Misc
+
+# METIS
+TARGET=metis-5.1.0
+tar xvf $TARGET.tar.gz
+cd $TARGET
+check $? $TARGET PREPARE
+make clean
+#make config prefix=$PREFIX
+if test $COMPILER = intel
+then
+  make config prefix=$PREFIX cc=icc
+else
+  make config prefix=$PREFIX cc=gcc
+fi
+check $? $TARGET CONFIG
+make
+check $? $TARGET BUILD
+make install
+check $? $TARGET INSTALL
+cd ..
+
+# ScaLAPACK
+TARGET=scalapack-2.0.2
+tar xvf $TARGET.tar.gz
+cd $TARGET
+check $? $TARGET PREPARE
+if test $NOMKL -eq 0
+then
+  cp ../SLmake.inc.mkl ./SLmake.inc
+else
+  cp ../SLmake.inc.blas ./SLmake.inc
+fi
+make
+check $? $TARGET BUILD
+install -c ./libscalapack.a $PREFIX/lib
+check $? $TARGET INSTALL
+cd ..
+
+# MUMPS
+TARGET=MUMPS_5.0.1
+tar xvf $TARGET.tar.gz
+cd $TARGET
+if test $NOMKL -eq 0
+then
+  if test $COMPILER = intel
+  then
+    cp ../Makefile.inc.intel ./Makefile.inc
+  else
+    cp ../Makefile.inc.gnu-mkl ./Makefile.inc
+  fi
+else
+  cp ../Makefile.inc.gnu ./Makefile.inc
+fi
+check $? $TARGET PREPARE
+make clean
+make alllib prefix=$PREFIX
+check $? $TARGET BUILD
+install -c lib/*.a $PREFIX/lib && install -c -m 644 include/*.h $PREFIX/include
+check $? $TARGET INSTALL
+cd ..
+
+# ELAI
+cd ..
+mkdir -p $PREFIX/include/Elai
+check $? $TARGET PREPARE
+install -c -m 644 Elai/* $PREFIX/include/Elai
+install -c -m 644 elai.h $PREFIX/include
+check $? $TARGET INSTALL
+
+echo "<<< ELAI INSTALLATION SUCCEEDED >>>"
+echo
+echo "NEXT> cd Test; PREFIX=ELAI_DIRECTORY ./Run"
+echo
+echo "USING> export ELAI_INC=ELAI_DIRECTORY/include \\"
+echo "       export ELAI_LIB=ELAI_DIRECTORY/lib"
+

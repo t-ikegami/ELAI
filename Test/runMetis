@@ -1,0 +1,32 @@
+#!/bin/sh
+CC=mpic++
+if test -f $TARGET.cc
+then
+  echo "  >>> COMPILE[ $TARGET ] BEG <<<"
+  $CC -DELAI_DEBUG -o $TARGET -I$PREFIX/include -I../Elai $TARGET.cc -L$PREFIX/lib -lmetis
+  ret=$?
+  echo "  >>> COMPILE[ $TARGET ] END <<<"
+  if test 0 -eq $ret
+  then
+    echo "!!    COMPILE SUCCEEDED"
+    echo
+    echo "  >>> CHECK[ $TARGET ] BEG <<<"
+    ./$TARGET
+    ret=$?
+    rm $TARGET
+    echo "  >>> CHECK[ $TARGET ] END <<<"
+    if test 0 -eq $ret
+    then
+      echo "!!    CHECK SUCCEEDED"
+      echo
+    else
+      echo "!!    CHECK FAILED"
+      echo
+      exit 1
+    fi
+  else
+    echo "!!    COMPILE FAILED"
+    echo
+    exit 1
+  fi
+fi

@@ -1,0 +1,30 @@
+#!/bin/sh
+if test -f $1.cc
+then
+  echo "  >>> COMPILE[ $1 ] BEG <<<"
+  g++ -g -DELAI_DEBUG -o $1 -I../Elai $1.cc
+  ret=$?
+  echo "  >>> COMPILE[ $1 ] END <<<"
+  if test 0 -eq $ret
+  then
+    echo "!!    COMPILE SUCCEEDED"
+    echo
+    echo "  >>> CHECK[ $1 ] BEG <<<"
+#    valgrind --track-origins=yes --leak-check=full --show-leak-kinds=all ./$1
+    valgrind --track-origins=yes --leak-check=full ./$1
+    ret=$?
+    rm $1
+    echo "  >>> CHECK[ $1 ] END <<<"
+    if test 0 -eq $ret
+    then
+      echo "!!    CHECK SUCCEEDED"
+      echo
+    else
+      echo "!!    CHECK FAILED"
+      echo
+    fi
+  else
+    echo "!!    COMPILE FAILED"
+    echo
+  fi
+fi
