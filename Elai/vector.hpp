@@ -66,6 +66,14 @@ class vector
 public:
   typedef Coef range;
 
+#ifdef ELAI_USE_PYTHON
+  void init(int m)
+  {
+    m_ = m;
+    init();
+  }
+#endif
+
   vector() : m_( 0 ), f_( NULL ), mem_( 0 ) {}
   vector( const int m ) : m_( m ), f_( NULL ), mem_( 0 ) { init(); }
   vector( const int m, range *f ) : m_( m ), f_( NULL ), mem_( 0 )
@@ -194,6 +202,15 @@ public:
   int col( int k ) const { return 0; }
   range *val() { return f_; }
   const range *val() const { return f_; }
+
+#ifdef ELAI_USE_PYTHON
+  // This method is called from NumPy.
+  void getF(int *nelems, Coef **data)
+  {
+    *nelems = m_;
+    *data = f_;
+  }
+#endif
 
   range& operator()( int i )
   {

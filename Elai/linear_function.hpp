@@ -297,6 +297,13 @@ public:
   range& operator()( const Element& x ) { return f_( x_.index( x ) ); }
   const range& operator()( const Element& x ) const { return f_( x_.index( x ) ); }
 
+#ifdef ELAI_USE_PYTHON
+  void setVector(const Element& x, range val)
+  {
+    f_( x_.index( x ) ) = val;
+  }
+#endif
+
   linear_function< Element, Neighbour, Range >& clear( const Range v )
   {
     f_.clear( v );

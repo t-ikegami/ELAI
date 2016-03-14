@@ -29,10 +29,12 @@
 namespace elai
 {
 
+#ifndef ELAI_FLATNESTED
 template< class Coef >
 class generator
 {
 public:
+#endif // ELAI_FLATNESTED
   class Element
   {
     const int i_, c_;
@@ -123,6 +125,12 @@ public:
     const_iterator end() const { return adj_.end(); }
   };
 
+#ifdef ELAI_FLATNESTED
+template< class Coef >
+class generator
+{
+public:
+#endif // ELAI_FLATNESTED
   typedef matrix< Coef > Matrix;
   typedef elai::space< Element > Space;
   typedef elai::family< Element, Neighbour > Family;

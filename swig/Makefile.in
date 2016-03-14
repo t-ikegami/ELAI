@@ -1,0 +1,42 @@
+prefix	= @prefix@
+python_site_packages = $(prefix)/lib/python@PYTHON_VERSION@/site-packages
+libdir	= $(python_site_packages)/elai
+CC	= @CXX@
+CXX     = @CXX@
+LD	= $(CC)
+TARGET	= elai.py _elai.so
+OPTIMIZE_FLAGS ?= -O3
+CFLAGS  += @ENABLE_ASSERTION@ $(OPTIMIZE_FLAGS)
+
+# `-I' is not set here. The script of setup.py require only the dir name.
+ELAI_INC_DIR    = .. $(prefix)/include @ELAI_INC_DIR@
+MPI4PY_INC_DIR  = @MPI4PY_INC_DIR@
+NUMPY_INC_DIR   = @NUMPY_INC_DIR@
+INC_DIRS        = $(ELAI_INC_DIR) $(MPI4PY_INC_DIR) $(NUMPY_INC_DIR)
+
+.PHONY: all aml clean distclean install uninstall check
+
+all: aml
+
+aml: clean elai.i setup.py
+	CC=$(CC) CXX=$(CXX) CFLAGS="$(CFLAGS)" python setup.py --includes="$(INC_DIRS)" build_ext --swig-cpp -i
+
+clean:
+	rm -rf build elai.py *.pyc *_wrap.cpp $(TARGET)
+
+distclean: clean
+	rm -f Makefile setup.py
+
+INSTALL_TARGETS = __init__.py $(TARGET)
+install: all
+	install -d $(libdir)
+	for i in $(INSTALL_TARGETS); do install -c $$i $(libdir); done
+
+uninstall:
+	rm -f $(libdir)/*.pyc
+	for i in $(INSTALL_TARGETS); do rm -f $(libdir)/$$i; done
+	-rmdir -p $(libdir); :
+	# Above colon(:) are performing in order to clear the error status.
+
+check:
+	: # Do nothing.

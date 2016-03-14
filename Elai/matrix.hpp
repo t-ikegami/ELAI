@@ -102,6 +102,16 @@ private:
   }
 
 public:
+#ifdef ELAI_USE_PYTHON
+  void init(int m, int n, int nnz)
+  {
+    m_ = m;
+    n_ = n;
+    nnz_ = nnz;
+    init();
+  }
+#endif
+
   matrix()
     : m_( 0 ), n_( 0 ), nnz_( 0 )
     , ind_( NULL ), col_( NULL ), c_( NULL ), z_( 0 )
@@ -249,6 +259,26 @@ public:
   int ind( int i ) const { return ind_[ i ]; }
   int col( int k ) const { return col_[ k ]; }
   range val( int k ) const { return c_[ k ]; }
+
+#ifdef ELAI_USE_PYTHON
+  void getInd(int *nelems, int **data)
+  {
+    *nelems = m_ + 1;
+    *data = ind_;
+  }
+
+  void getCol(int *nelems, int **data)
+  {
+    *nelems = nnz_;
+    *data = col_;
+  }
+
+  void getC(int *nelems, range **data)
+  {
+    *nelems = nnz_;
+    *data = c_;
+  }
+#endif // ELAI_USE_PYTHON
 
   // FOR ONLY MUMPS, OTHERS DO NOT TOUCH!!
   int *ind() { return ind_; }

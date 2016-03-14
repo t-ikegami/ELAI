@@ -1,0 +1,23 @@
+SUBDIRS	= swig
+
+.PHONY: all clean distclean install uninstall check
+
+all:
+	for i in $(SUBDIRS); do (cd $$i; $(MAKE) all) || exit 1; done
+
+clean:
+	for i in $(SUBDIRS); do (cd $$i; $(MAKE) clean) || exit 1; done
+
+distclean: clean
+	rm -rf autom4te.cache autoscan.log config.log config.status configure.lineno
+	rm -f Makefile
+	for i in $(SUBDIRS); do (cd $$i; $(MAKE) distclean) || exit 1; done
+
+install:
+	for i in $(SUBDIRS); do (cd $$i; $(MAKE) install) || exit 1; done
+
+uninstall:
+	for i in $(SUBDIRS); do (cd $$i; $(MAKE) uninstall) || exit 1; done
+
+check:
+	for i in $(SUBDIRS); do (cd $$i; $(MAKE) check) || exit 1; done
