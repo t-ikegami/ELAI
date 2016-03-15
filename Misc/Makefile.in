@@ -35,9 +35,13 @@ uninstall:
 
 metis:
 	tar xf $(METIS).tar.gz
-	make -C $(METIS) config prefix=$(prefix) cc=$(CC)
-	patch -p0 < Patches/metis.patch
-	make -C $(METIS) all install
+	( \
+	    cd $(METIS); \
+	    make config prefix=$(prefix) cc=$(CC); \
+	    patch -p1 < ../Patches/metis.patch; \
+	    make; \
+	    make install; \
+	)
 
 mumps:
 	tar xf $(MUMPS).tar.gz
