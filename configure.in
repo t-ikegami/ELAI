@@ -155,6 +155,7 @@ AC_SUBST(ENABLE_ASSERTION)
 
 AC_CONFIG_FILES([
     Makefile
+    Misc/Makefile
     swig/Makefile
     swig/setup.py
 ])

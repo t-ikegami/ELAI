@@ -1,0 +1,24 @@
+diff -ur metis-5.1.0-orig/GKlib/GKlibSystem.cmake metis-5.1.0/GKlib/GKlibSystem.cmake
+--- metis-5.1.0-orig/GKlib/GKlibSystem.cmake	2013-03-31 01:24:45.000000000 +0900
++++ metis-5.1.0/GKlib/GKlibSystem.cmake	2016-03-15 14:51:35.856264074 +0900
+@@ -20,7 +20,7 @@
+ elseif(MINGW)
+   set(GKlib_COPTS "-DUSE_GKREGEX")
+ else()
+-  set(GKlib_COPTS "-O3")
++  set(GKlib_COPTS "-O3 -fPIC")
+   set(GKlib_COPTIONS "-DLINUX -D_FILE_OFFSET_BITS=64")
+ endif(MSVC)
+ if(CYGWIN)
+diff -ur metis-5.1.0-orig/Makefile metis-5.1.0/Makefile
+--- metis-5.1.0-orig/Makefile	2013-03-31 01:24:45.000000000 +0900
++++ metis-5.1.0/Makefile	2016-03-15 14:51:24.373464469 +0900
+@@ -64,7 +64,7 @@
+ 	@if [ ! -f $(BUILDDIR)/Makefile ]; then \
+ 		more BUILD.txt; \
+ 	else \
+-	  	make -C $(BUILDDIR) $@ $(MAKEFLAGS); \
++	  	make -C $(BUILDDIR) $@; \
+ 	fi
+ 
+ uninstall:

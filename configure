@@ -4644,7 +4644,7 @@ fi
 
 
 
-ac_config_files="$ac_config_files Makefile swig/Makefile swig/setup.py"
+ac_config_files="$ac_config_files Makefile Misc/Makefile swig/Makefile swig/setup.py"
 
 
 cat >confcache <<\_ACEOF
@@ -5338,6 +5338,7 @@ do
   case $ac_config_target in
     "config.h") CONFIG_HEADERS="$CONFIG_HEADERS config.h" ;;
     "Makefile") CONFIG_FILES="$CONFIG_FILES Makefile" ;;
+    "Misc/Makefile") CONFIG_FILES="$CONFIG_FILES Misc/Makefile" ;;
     "swig/Makefile") CONFIG_FILES="$CONFIG_FILES swig/Makefile" ;;
     "swig/setup.py") CONFIG_FILES="$CONFIG_FILES swig/setup.py" ;;
 

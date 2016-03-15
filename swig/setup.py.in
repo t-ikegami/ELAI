@@ -2,11 +2,14 @@ import sys
 from distutils.core import setup, Extension
 import numpy as np
 
+prefix = '@prefix@'
+libdir = prefix + '/lib'
+
 include_dirs = [np.get_include()]
 s_opts = ['-builtin']
 libs = ['dmumps', 'mumps_common', 'scalapack', 'metis', 'pord', @ELAI_LIBS@, 'mpi_mpifh']
 lib_dirs = [
-    '@prefix@/lib',
+    libdir,
 ]
 #macros = [('SWIG_AVOID_SYNTAXERROR', 1)]
 macros = []

@@ -1,0 +1,60 @@
+prefix = @prefix@
+exec_prefix = @exec_prefix@
+bindir = @bindir@
+includedir = @includedir@
+libdir = @libdir@
+
+METIS = metis-5.1.0
+MUMPS = MUMPS_5.0.1
+SCALAPACK = scalapack-2.0.2
+
+.PHONE: all clean distclean install uninstall check metis mumps scalapack
+
+all:
+	install -d $(bindir) $(includedir) $(libdir)
+	make clean metis mumps scalapack
+
+clean:
+	rm -rf $(METIS)
+	rm -rf $(MUMPS)
+	rm -rf $(SCALAPACK)
+
+distclean: clean
+	rm -f Makefile
+
+install:
+	install -d $(includedir)/Elai
+	install -c -m 644 Elai/* $(includedir)/Elai
+	install -c -m elai.h $(includedir)
+
+uninstall:
+	rm -f $(bindir)/{cmpfillin,gpmetis,graphchk,m2gmetis,mpmetis,ndmetis}
+	rm -rf $(includedir)/Elai $(includedir)/elai.h
+	rm -f $(includedir)/{dmumps_c.h,metis.h,smumps_root.h,zmumps_struc.h,cmumps_c.h,dmumps_root.h,mumps_c_types.h,smumps_struc.h,cmumps_root.h,dmumps_struc.h,mumps_compat.h,zmumps_c.h,cmumps_struc.h,elai.h,smumps_c.h,zmumps_root.h}
+	rm -f $(libdir)/{libcmumps.a,libmetis.a,libpord.a,libsmumps.a,libdmumps.a,libmumps_common.a,libscalapack.a,libzmumps.a}
+
+metis:
+	tar xf $(METIS).tar.gz
+	make -C $(METIS) config prefix=$(prefix) cc=$(CC)
+	patch -p0 < Patches/metis.patch
+	make -C $(METIS) all install
+
+mumps:
+	tar xf $(MUMPS).tar.gz
+	( \
+	    cd $(MUMPS); \
+	    cp ../Patches/mumps-makefile.inc Makefile.inc; \
+	    make clean; \
+	    make alllib prefix=$(prefix); \
+	    install -c lib/*.a $(libdir); \
+	    install -c -m 644 include/*.h $(includedir); \
+	)
+
+scalapack:
+	tar xf $(SCALAPACK).tar.gz
+	( \
+	    cd $(SCALAPACK); \
+	    cp ../Patches/scalapack-slmake.inc SLmake.inc; \
+	    make; \
+	    install -c libscalapack.a $(libdir); \
+	)
