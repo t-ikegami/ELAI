@@ -1,0 +1,58 @@
+Prerequisite:
+    The Elastic Linear Algebra Interface (ELAI) require Python, SWIG 3.x,
+    MPI, Mpi4Py and NumPy.
+    We have already tested by Python-2.7.5 and SWIG-3.0.7. We recomended to
+    use the Python-2.7 or later.
+
+Build:
+    To build and install the ELAI, simply type the following:
+
+    Ex.
+        $ ./configure
+        $ make
+        $ make install
+
+    By default the ELAI installs itself in /usr/local. If you need to install
+    the ELAI in a different location or in you home directory, use the
+    --prefix option to ./configure.
+
+    Ex.
+        $ ./configure --prefix=/home/youname/projects
+        $ make
+        $ make install
+
+    Type `./configure --help' for more information.
+
+Use GNU C compiler:
+    ELAI is recomend to use Intel Compiler for parformance improvement.
+    When you use GNU C compiler, you will need to pass --with-gcc flag
+    to ./configure.
+
+    Ex.
+        $ ./configure --with-gcc
+
+Options for related software:
+    When you installed to not default directory /usr, use below options to
+    pass ./configure.
+
+        --with-elai=PATH
+        --with-mpi=PATH
+        --with-mpi4py=PATH
+        --with-numpy=PATH
+
+Debugging:
+    Please set the environment variable of OPTIMIZE_FLAGS to `-g -O0', when
+    you debugging the AISTMeshLib. And execute the make command.
+
+    Ex.
+
+        $ export OPTIMIZE_FLAGS
+	$ OPTIMIZE_FLAGS="-g -O0"
+	$ make
+
+Disable assertion:
+    Please pass --without-assertion flag to ./configure when you need to
+    disabled assertion, then -UNDEBUG is not passed to C and C++ compilers.
+
+    Ex.
+        $ ./configure --without-asserion
