@@ -3519,7 +3519,7 @@ fi
 done
 
   if test "x$ac_ct_icc_found" = x; then
-    icc_found="icc"
+    icc_found="no"
   else
     case $cross_compiling:$ac_tool_warned in
 yes:)
