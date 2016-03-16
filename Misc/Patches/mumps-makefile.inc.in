@@ -75,9 +75,9 @@ FC = mpif90
 FL = mpif90
 AR = ar vr 
 #RANLIB = ranlib
-RANLIB  = echo
+RANLIB  = @RANLIB_CMD@
 #LIBBLAS = -L$(prefix)/lib -lblas
-LIBBLAS = -lmkl_rt
+LIBBLAS = @BLAS_LIB@
 #SCALAP  = -L$(prefix)/lib -lscalapack $(LIBBLAS)
 SCALAP  = -lscalapack -lblacs $(LIBBLAS)
 INCPAR = -I$(prefix)/include
@@ -90,8 +90,8 @@ LIBOTHERS =
 CDEFS   = -DAdd_
 
 #Begin Optimized options
-OPTF    = -fPIC -O -DALLOW_NON_INIT -nofor_main
-OPTL    = -fPIC -O -nofor_main
+OPTF    = -fPIC -O @FORTRAN_OPT@
+OPTL    = -fPIC -O @LD_OPT@
 OPTC    = -fPIC -O
 #End Optimized options
 INCS = $(INCPAR)
