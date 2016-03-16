@@ -18,7 +18,9 @@ AC_PROG_RANLIB
 CC=mpicc
 CXX=mpic++
 
-with_gcc=no
+icc_found="false"
+AC_CHECK_TOOLS(icc_found, icc, true)
+if test "$icc_found" = "false"; then with_gcc=yes; fi
 AC_MSG_CHECKING([for --with-gcc])
 AC_ARG_WITH(
     gcc,
@@ -32,6 +34,7 @@ AC_ARG_WITH(
     ]
 )
 AC_MSG_RESULT($with_gcc)
+if test "x$with_gcc" = "x"; then whth_gcc=no; fi
 
 enable_assertion="yes"
 AC_MSG_CHECKING([for --enable-assertion])
@@ -98,9 +101,19 @@ AS_IF([test $HAS_SWIG != found],
         Cannot find swig. Please install SWIG 2 or later.], [1])])
 
 ELAI_LIBS="'mkl_rt', 'ifcore'"
+BLAS_LIB="-lmkl_rt"
+LAPACK_LIB=
+RANLIB_CMD="echo"
+FORTRAN_OPT="-DALLOW_NON_INIT -nofort_main"
+LD_OPT="-nofor_main"
 if test "$with_gcc" = "yes"
 then
     ELAI_LIBS="'blas'"
+    BLAS_LIB="-lblas"
+    LAPACK_LIB="-llapack"
+    RANLIB_CMD="ranlib"
+    FORTRAN_OPT="-DALLOW_NON_INIT"
+    LD_OPT=""
 fi
 
 if test -n "$with_elai"
@@ -149,6 +162,11 @@ AC_SUBST(PYTHON_VERSION)
 AC_SUBST(ELAI_INC_DIR)
 AC_SUBST(ELAI_LIB_DIR)
 AC_SUBST(ELAI_LIBS)
+AC_SUBST(BLAS_LIB)
+AC_SUBST(LAPACK_LIB)
+AC_SUBST(RANLIB_CMD)
+AC_SUBST(FORTRAN_OPT)
+AC_SUBST(LD_OPT)
 AC_SUBST(MPI4PY_INC_DIR)
 AC_SUBST(NUMPY_INC_DIR)
 AC_SUBST(ENABLE_ASSERTION)
@@ -156,6 +174,8 @@ AC_SUBST(ENABLE_ASSERTION)
 AC_CONFIG_FILES([
     Makefile
     Misc/Makefile
+    Misc/Patches/mumps-makefile.inc
+    Misc/Patches/scalapack-slmake.inc
     swig/Makefile
     swig/setup.py
 ])

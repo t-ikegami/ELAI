@@ -34,8 +34,14 @@ namespace elai
 template< class Element, class Neighbour >
 class subjugator
 {
+#ifdef __GNUC__
+public:
+#endif // __GNUC__
   typedef space< Element > Space;
   typedef family< Element, Neighbour > Family;
+#ifdef __GNUC__
+private:
+#endif // __GNUC__
 #ifdef ELAI_USE_MPI
   typedef struct Space::const_internal_point Marginal;
 #endif

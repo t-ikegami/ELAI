@@ -55,6 +55,6 @@ SCALAPACKLIB  = libscalapack.a
 #  BLAS, LAPACK (and possibly other) libraries needed for linking test programs
 #
 
-BLASLIB       = -lmkl_rt
-LAPACKLIB     = 
+BLASLIB       = @BLAS_LIB@
+LAPACKLIB     = @LAPACK_LIB@
 LIBS          = $(LAPACKLIB) $(BLASLIB)

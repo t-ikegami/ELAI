@@ -626,6 +626,11 @@ ac_subst_vars='LTLIBOBJS
 ENABLE_ASSERTION
 NUMPY_INC_DIR
 MPI4PY_INC_DIR
+LD_OPT
+FORTRAN_OPT
+RANLIB_CMD
+LAPACK_LIB
+BLAS_LIB
 ELAI_LIBS
 ELAI_LIB_DIR
 ELAI_INC_DIR
@@ -641,6 +646,8 @@ ac_ct_MPICXX
 MPICXX
 ac_ct_MPICC
 MPICC
+ac_ct_icc_found
+icc_found
 RANLIB
 SET_MAKE
 LN_S
@@ -3424,7 +3431,108 @@ fi
 CC=mpicc
 CXX=mpic++
 
-with_gcc=no
+icc_found="false"
+if test -n "$ac_tool_prefix"; then
+  for ac_prog in icc
+  do
+    # Extract the first word of "$ac_tool_prefix$ac_prog", so it can be a program name with args.
+set dummy $ac_tool_prefix$ac_prog; ac_word=$2
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for $ac_word" >&5
+$as_echo_n "checking for $ac_word... " >&6; }
+if ${ac_cv_prog_icc_found+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  if test -n "$icc_found"; then
+  ac_cv_prog_icc_found="$icc_found" # Let the user override the test.
+else
+as_save_IFS=$IFS; IFS=$PATH_SEPARATOR
+for as_dir in $PATH
+do
+  IFS=$as_save_IFS
+  test -z "$as_dir" && as_dir=.
+    for ac_exec_ext in '' $ac_executable_extensions; do
+  if as_fn_executable_p "$as_dir/$ac_word$ac_exec_ext"; then
+    ac_cv_prog_icc_found="$ac_tool_prefix$ac_prog"
+    $as_echo "$as_me:${as_lineno-$LINENO}: found $as_dir/$ac_word$ac_exec_ext" >&5
+    break 2
+  fi
+done
+  done
+IFS=$as_save_IFS
+
+fi
+fi
+icc_found=$ac_cv_prog_icc_found
+if test -n "$icc_found"; then
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: $icc_found" >&5
+$as_echo "$icc_found" >&6; }
+else
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+$as_echo "no" >&6; }
+fi
+
+
+    test -n "$icc_found" && break
+  done
+fi
+if test -z "$icc_found"; then
+  ac_ct_icc_found=$icc_found
+  for ac_prog in icc
+do
+  # Extract the first word of "$ac_prog", so it can be a program name with args.
+set dummy $ac_prog; ac_word=$2
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for $ac_word" >&5
+$as_echo_n "checking for $ac_word... " >&6; }
+if ${ac_cv_prog_ac_ct_icc_found+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  if test -n "$ac_ct_icc_found"; then
+  ac_cv_prog_ac_ct_icc_found="$ac_ct_icc_found" # Let the user override the test.
+else
+as_save_IFS=$IFS; IFS=$PATH_SEPARATOR
+for as_dir in $PATH
+do
+  IFS=$as_save_IFS
+  test -z "$as_dir" && as_dir=.
+    for ac_exec_ext in '' $ac_executable_extensions; do
+  if as_fn_executable_p "$as_dir/$ac_word$ac_exec_ext"; then
+    ac_cv_prog_ac_ct_icc_found="$ac_prog"
+    $as_echo "$as_me:${as_lineno-$LINENO}: found $as_dir/$ac_word$ac_exec_ext" >&5
+    break 2
+  fi
+done
+  done
+IFS=$as_save_IFS
+
+fi
+fi
+ac_ct_icc_found=$ac_cv_prog_ac_ct_icc_found
+if test -n "$ac_ct_icc_found"; then
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_ct_icc_found" >&5
+$as_echo "$ac_ct_icc_found" >&6; }
+else
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+$as_echo "no" >&6; }
+fi
+
+
+  test -n "$ac_ct_icc_found" && break
+done
+
+  if test "x$ac_ct_icc_found" = x; then
+    icc_found="true"
+  else
+    case $cross_compiling:$ac_tool_warned in
+yes:)
+{ $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: using cross tools not prefixed with host triplet" >&5
+$as_echo "$as_me: WARNING: using cross tools not prefixed with host triplet" >&2;}
+ac_tool_warned=yes ;;
+esac
+    icc_found=$ac_ct_icc_found
+  fi
+fi
+
+if test "$icc_found" = "false"; then with_gcc=yes; fi
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking for --with-gcc" >&5
 $as_echo_n "checking for --with-gcc... " >&6; }
 
@@ -3442,6 +3550,7 @@ fi
 
 { $as_echo "$as_me:${as_lineno-$LINENO}: result: $with_gcc" >&5
 $as_echo "$with_gcc" >&6; }
+if test "x$with_gcc" = "x"; then whth_gcc=no; fi
 
 enable_assertion="yes"
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking for --enable-assertion" >&5
@@ -4586,9 +4695,19 @@ See \`config.log' for more details" "$LINENO" 5; }
 fi
 
 ELAI_LIBS="'mkl_rt', 'ifcore'"
+BLAS_LIB="-lmkl_rt"
+LAPACK_LIB=
+RANLIB_CMD="echo"
+FORTRAN_OPT="-DALLOW_NON_INIT -nofort_main"
+LD_OPT="-nofor_main"
 if test "$with_gcc" = "yes"
 then
     ELAI_LIBS="'blas'"
+    BLAS_LIB="-lblas"
+    LAPACK_LIB="-llapack"
+    RANLIB_CMD="ranlib"
+    FORTRAN_OPT="-DALLOW_NON_INIT"
+    LD_OPT=""
 fi
 
 if test -n "$with_elai"
@@ -4644,7 +4763,12 @@ fi
 
 
 
-ac_config_files="$ac_config_files Makefile Misc/Makefile swig/Makefile swig/setup.py"
+
+
+
+
+
+ac_config_files="$ac_config_files Makefile Misc/Makefile Misc/Patches/mumps-makefile.inc Misc/Patches/scalapack-slmake.inc swig/Makefile swig/setup.py"
 
 
 cat >confcache <<\_ACEOF
@@ -5339,6 +5463,8 @@ do
     "config.h") CONFIG_HEADERS="$CONFIG_HEADERS config.h" ;;
     "Makefile") CONFIG_FILES="$CONFIG_FILES Makefile" ;;
     "Misc/Makefile") CONFIG_FILES="$CONFIG_FILES Misc/Makefile" ;;
+    "Misc/Patches/mumps-makefile.inc") CONFIG_FILES="$CONFIG_FILES Misc/Patches/mumps-makefile.inc" ;;
+    "Misc/Patches/scalapack-slmake.inc") CONFIG_FILES="$CONFIG_FILES Misc/Patches/scalapack-slmake.inc" ;;
     "swig/Makefile") CONFIG_FILES="$CONFIG_FILES swig/Makefile" ;;
     "swig/setup.py") CONFIG_FILES="$CONFIG_FILES swig/setup.py" ;;
 

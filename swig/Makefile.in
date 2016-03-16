@@ -37,6 +37,8 @@ install: all
 
 uninstall:
 	rm -rf $(elailibdir)
+	-rmdir -p $(elailibdir) $(python_site_packages) $(libdir)/python $(libdir) 2>/dev/null; :
+	# Above colon(:) are performing in order to clear the error status.
 
 check:
 	: # Do nothing.
