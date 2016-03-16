@@ -10,12 +10,23 @@ SUBDIRS	= Misc swig
 
 all:
 	install -d $(bindir) $(includedir) $(libdir)
-	for i in $(SUBDIRS); do (cd $$i; $(MAKE) all) || exit 1; done
-
-clean install uninstall:
 	for i in $(SUBDIRS); do (cd $$i; $(MAKE) $@) || exit 1; done
+
+clean:
+	for i in $(SUBDIRS); do (cd $$i; $(MAKE) $@) || exit 1; done
+
+install:
+	install -d $(includedir)/Elai
+	install -c -m 644 Elai/* $(includedir)/Elai
+	install -c -m 644 elai.h $(includedir)
+	for i in $(SUBDIRS); do (cd $$i; $(MAKE) $@) || exit 1; done
+
+uninstall:
+	for i in $(SUBDIRS); do (cd $$i; $(MAKE) $@) || exit 1; done
+	-rmdir -p $(bindir) $(includedir)/Elai $(includedir) $(libdir) 2>/dev/null; :
+	# Above colon(:) are performing in order to clear the error status.
 
 distclean: clean
 	rm -rf autom4te.cache autoscan.log config.log config.status configure.lineno
 	rm -f Makefile
-	for i in $(SUBDIRS); do (cd $$i; $(MAKE) distclean) || exit 1; done
+	for i in $(SUBDIRS); do (cd $$i; $(MAKE) $@) || exit 1; done

@@ -23,15 +23,16 @@ distclean: clean
 	rm -f Makefile
 
 install:
-	install -d $(includedir)/Elai
-	install -c -m 644 Elai/* $(includedir)/Elai
-	install -c -m elai.h $(includedir)
+	: # Do nothing.
 
 uninstall:
 	rm -f $(bindir)/{cmpfillin,gpmetis,graphchk,m2gmetis,mpmetis,ndmetis}
 	rm -rf $(includedir)/Elai $(includedir)/elai.h
 	rm -f $(includedir)/{dmumps_c.h,metis.h,smumps_root.h,zmumps_struc.h,cmumps_c.h,dmumps_root.h,mumps_c_types.h,smumps_struc.h,cmumps_root.h,dmumps_struc.h,mumps_compat.h,zmumps_c.h,cmumps_struc.h,elai.h,smumps_c.h,zmumps_root.h}
 	rm -f $(libdir)/{libcmumps.a,libmetis.a,libpord.a,libsmumps.a,libdmumps.a,libmumps_common.a,libscalapack.a,libzmumps.a}
+	-rmdir -p $(bindir) $(includedir)/Elai $(includedir) $(libdir) 2>/dev/null; :
+	# Above colon(:) are performing in order to clear the error status.
+
 
 metis:
 	tar xf $(METIS).tar.gz
