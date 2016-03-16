@@ -3519,7 +3519,7 @@ fi
 done
 
   if test "x$ac_ct_icc_found" = x; then
-    icc_found="true"
+    icc_found="no"
   else
     case $cross_compiling:$ac_tool_warned in
 yes:)
@@ -3531,7 +3531,7 @@ esac
   fi
 fi
 
-if test "$icc_found" = "false"; then with_gcc=yes; fi
+if test "$icc_found" != "yes"; then with_gcc=yes; fi
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking for --with-gcc" >&5
 $as_echo_n "checking for --with-gcc... " >&6; }
 
