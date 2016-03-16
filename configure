@@ -4722,7 +4722,13 @@ if test -n "$with_mpi4py"
 then
     MPI4PY_INC_DIR="$with_mpi4py/include"
 else
-    MPI4PY_INC_DIR="$ac_default_prefix/include"
+    cpu=""
+    if test "x`uname -p`" = "xx86_64"; then cpu=64; fi
+    MPI4PY_INC_DIR=/usr/lib$cpu/python2.7/site-packages/mpi4py/include
+    if test ! -f $MPI4PY_INC_DIR/mpi4py/mpi4py.i
+    then
+	MPI4PY_INC_DIR="$ac_default_prefix/include"
+    fi
 fi
 if test -n "$with_mpi4py_include"
 then
