@@ -218,9 +218,9 @@ public:
 
 #undef JOB_INIT
 #undef JOB_END
-#undef INFO(I)
-#undef RINFO(I)
-#undef CNTL(I)
-#undef ICNTL(I)
+#undef INFO
+#undef RINFO
+#undef CNTL
+#undef ICNTL
 
 #endif//__ELAI_MUMPS__
