@@ -1338,14 +1338,15 @@ Optional Packages:
   --with-PACKAGE[=ARG]    use PACKAGE [ARG=yes]
   --without-PACKAGE       do not use PACKAGE (same as --with-PACKAGE=no)
   --with-gcc              use gcc
-  --with-mpi=PATH         specify prefix directory for installed MPI packag.
+  --with-mpi=PATH         specify prefix directory for installed MPI package.
   --with-mpi-include=PATH specify directory for installed MPI include files.
   --with-mpi4py=PATH      specify prefix directory for installed Mpi4py
-                          packag.
+                          package.
   --with-mpi4py-include=PATH
                           specify directory for installed Mpi4py include
                           files.
-  --with-numpy=PATH       specify prefix directory for installed NumPy packag.
+  --with-numpy=PATH       specify prefix directory for installed NumPy
+                          package.
 
 Some influential environment variables:
   CXX         C++ compiler command
