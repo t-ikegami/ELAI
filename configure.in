@@ -18,8 +18,9 @@ AC_PROG_RANLIB
 CC=mpicc
 CXX=mpic++
 
-AC_CHECK_TOOLS(icc_found, icc, no)
+AC_CHECK_PROG(icc_found, icc, icc, no)
 if test "$icc_found" != "icc"; then with_gcc=yes; fi
+
 AC_MSG_CHECKING([for --with-gcc])
 AC_ARG_WITH(
     gcc,
