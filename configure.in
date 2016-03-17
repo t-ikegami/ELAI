@@ -131,10 +131,10 @@ then
 else
     cpu=""
     if test "x`uname -p`" = "xx86_64"; then cpu=64; fi
-    MPI4PY_INC_DIR=/usr/lib$cpu/python2.7/site-packages/mpi4py/include
+    MPI4PY_INC_DIR=/usr/lib$cpu/python$PYTHON_VERSION/site-packages/mpi4py/include
     if test ! -f $MPI4PY_INC_DIR/mpi4py/mpi4py.i
     then
-        MPI4PY_INC_DIR=$HOME/.local/lib/python2.7/site-packages/mpi4py/include
+        MPI4PY_INC_DIR=$HOME/.local/lib/python$PYTHON_VERSION/site-packages/mpi4py/include
         if test ! -f $MPI4PY_INC_DIR/mpi4py/mpi4py.i
         then
             MPI4PY_INC_DIR="$ac_default_prefix/include"
