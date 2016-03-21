@@ -20,6 +20,7 @@ clean:
 	rm -rf $(SCALAPACK)
 
 distclean: clean
+	rm Patches/mumps-makefile.inc Patches/scalapack-slmake.inc
 	rm -f Makefile
 
 install:
