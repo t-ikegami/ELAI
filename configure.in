@@ -186,8 +186,8 @@ AC_CONFIG_FILES([
     Misc/Makefile
     Misc/Patches/mumps-makefile.inc
     Misc/Patches/scalapack-slmake.inc
-    swig/Makefile
-    swig/setup.py
+    python/Makefile
+    python/setup.py
 ])
 
 AC_OUTPUT

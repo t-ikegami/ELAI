@@ -4,7 +4,7 @@ bindir = @bindir@
 includedir = @includedir@
 libdir = @libdir@
 
-SUBDIRS	= Misc swig
+SUBDIRS	= Misc python
 
 .PHONY: all clean distclean install uninstall
 

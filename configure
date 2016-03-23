@@ -4716,7 +4716,7 @@ fi
 
 
 
-ac_config_files="$ac_config_files Makefile Misc/Makefile Misc/Patches/mumps-makefile.inc Misc/Patches/scalapack-slmake.inc swig/Makefile swig/setup.py"
+ac_config_files="$ac_config_files Makefile Misc/Makefile Misc/Patches/mumps-makefile.inc Misc/Patches/scalapack-slmake.inc python/Makefile python/setup.py"
 
 
 cat >confcache <<\_ACEOF
@@ -5413,8 +5413,8 @@ do
     "Misc/Makefile") CONFIG_FILES="$CONFIG_FILES Misc/Makefile" ;;
     "Misc/Patches/mumps-makefile.inc") CONFIG_FILES="$CONFIG_FILES Misc/Patches/mumps-makefile.inc" ;;
     "Misc/Patches/scalapack-slmake.inc") CONFIG_FILES="$CONFIG_FILES Misc/Patches/scalapack-slmake.inc" ;;
-    "swig/Makefile") CONFIG_FILES="$CONFIG_FILES swig/Makefile" ;;
-    "swig/setup.py") CONFIG_FILES="$CONFIG_FILES swig/setup.py" ;;
+    "python/Makefile") CONFIG_FILES="$CONFIG_FILES python/Makefile" ;;
+    "python/setup.py") CONFIG_FILES="$CONFIG_FILES python/setup.py" ;;
 
   *) as_fn_error $? "invalid argument: \`$ac_config_target'" "$LINENO" 5;;
   esac
