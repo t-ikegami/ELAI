@@ -10,23 +10,25 @@ SUBDIRS	= Misc python
 
 all:
 	install -d $(bindir) $(includedir) $(libdir)
-	for i in $(SUBDIRS); do (cd $$i; $(MAKE) $@) || exit 1; done
+	for i in $(SUBDIRS); do $(MAKE) -C $$i $@ || exit 1; done
 
 clean:
-	for i in $(SUBDIRS); do (cd $$i; $(MAKE) $@) || exit 1; done
+	for i in $(SUBDIRS); do $(MAKE) -C $$i $@ || exit 1; done
 
 install:
 	install -d $(includedir)/Elai
 	install -c -m 644 Elai/* $(includedir)/Elai
 	install -c -m 644 elai.h $(includedir)
-	for i in $(SUBDIRS); do (cd $$i; $(MAKE) $@) || exit 1; done
+	for i in $(SUBDIRS); do $(MAKE) -C $$i $@ || exit 1; done
 
 uninstall:
-	for i in $(SUBDIRS); do (cd $$i; $(MAKE) $@) || exit 1; done
-	-rmdir -p $(bindir) $(includedir)/Elai $(includedir) $(libdir) 2>/dev/null; :
+	for i in $(SUBDIRS); do $(MAKE) -C $$i $@ || exit 1; done
+	cd $(includedir) && rm -rf elai.h Elai
+	cd $(libdir) && rm -f *.pyc $(INSTALL_TARGETS)
+	-rmdir -p $(libdir) $(includedir) 2>/dev/null; :
 	# Above colon(:) are performing in order to clear the error status.
 
 distclean: clean
 	rm -rf autom4te.cache autoscan.log config.log config.status configure.lineno
 	rm -f Makefile
-	for i in $(SUBDIRS); do (cd $$i; $(MAKE) $@) || exit 1; done
+	for i in $(SUBDIRS); do $(MAKE) -C $$i $@ || exit 1; done
