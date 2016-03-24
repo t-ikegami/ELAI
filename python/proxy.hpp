@@ -45,22 +45,6 @@ std::istream *ProxyIfstream(const char *fname)
 }
 
 void
-ProxyResult(
-    elai::matrix< double >& A,
-    elai::vector< double >& x,
-    elai::vector< double >& b)
-{
-    elai::vector< double> v = A * x - b;
-    double r = v * v, r0;
-
-    r = sqrt(r);
-    std::cout << "||A x - b|| = " << std::setprecision( 15 ) << r << std::endl;
-    r0 = x * x; r0 = sqrt( r0 );
-    r /= r0;
-    std::cout << "||A x - b||/||x|| = " << std::setprecision( 15 ) << r << std::endl;
-}
-
-void
 mul(
     elai::matrix< double >& mat,
     elai::vector< double >& vec,
