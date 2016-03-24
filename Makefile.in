@@ -23,8 +23,8 @@ install:
 
 uninstall:
 	for i in $(SUBDIRS); do $(MAKE) -C $$i $@ || exit 1; done
-	cd $(includedir) && rm -rf elai.h Elai
-	cd $(libdir) && rm -f *.pyc $(INSTALL_TARGETS)
+	cd $(includedir) && rm -rf elai.h Elai; :
+	cd $(libdir) && rm -f *.pyc $(INSTALL_TARGETS); :
 	-rmdir -p $(libdir) $(includedir) 2>/dev/null; :
 	# Above colon(:) are performing in order to clear the error status.
 
