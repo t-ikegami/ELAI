@@ -250,26 +250,6 @@ public:
   int col( int k ) const { return col_[ k ]; }
   range val( int k ) const { return c_[ k ]; }
 
-#ifdef ELAI_USE_PYTHON
-  void getInd(int *nelems, int **data)
-  {
-    *nelems = m_ + 1;
-    *data = ind_;
-  }
-
-  void getCol(int *nelems, int **data)
-  {
-    *nelems = nnz_;
-    *data = col_;
-  }
-
-  void getC(int *nelems, range **data)
-  {
-    *nelems = nnz_;
-    *data = c_;
-  }
-#endif // ELAI_USE_PYTHON
-
   // FOR ONLY MUMPS, OTHERS DO NOT TOUCH!!
   int *ind() { return ind_; }
   const int *ind() const { return ind_; }
