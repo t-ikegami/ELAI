@@ -116,6 +116,20 @@ import_array();
     }
 }
 
+%extend elai::linear_operator< elai::Element, elai::Neighbour, double > {
+    inline void setMatrix(const Element& f, double val)
+    {
+	(*$self)(f) = val;
+    }
+}
+
+%extend elai::linear_operator< elai::Element, elai::Neighbour, double > {
+    inline void setMatrix(const Element& f, const Element& x, double val)
+    {
+	(*$self)(f, x) = val;
+    }
+}
+
 namespace std {
     %template(vectorInt) vector<int>;
 };

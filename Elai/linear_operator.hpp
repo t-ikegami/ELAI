@@ -204,18 +204,6 @@ public:
   const range& operator()( const Element& f, const Element& x ) const
   { return A_( f_.index( f ), x_.index( x ) ); }
 
-#ifdef ELAI_USE_PYTHON
-  void setMatrix(const Element& f, range val)
-  {
-     A_( f_.index( f ), x_.index( f ) ) = val;
-  }
-
-  void setMatrix(const Element& f, const Element& x, range val)
-  {
-    A_( f_.index( f ), x_.index( x ) ) = val;
-  }
-#endif
-
   linear_operator< Element, Neighbour, Range >& clear( const Range c )
   {
     A_.clear( c );
