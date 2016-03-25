@@ -195,15 +195,6 @@ public:
   range *val() { return f_; }
   const range *val() const { return f_; }
 
-#ifdef ELAI_USE_PYTHON
-  // This method is called from NumPy.
-  void getF(int *nelems, Coef **data)
-  {
-    *nelems = m_;
-    *data = f_;
-  }
-#endif
-
   range& operator()( int i )
   {
     assert( i < m_ );
