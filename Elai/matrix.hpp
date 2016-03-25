@@ -102,16 +102,6 @@ private:
   }
 
 public:
-#ifdef ELAI_USE_PYTHON
-  void init(int m, int n, int nnz)
-  {
-    m_ = m;
-    n_ = n;
-    nnz_ = nnz;
-    init();
-  }
-#endif
-
   matrix()
     : m_( 0 ), n_( 0 ), nnz_( 0 )
     , ind_( NULL ), col_( NULL ), c_( NULL ), z_( 0 )
