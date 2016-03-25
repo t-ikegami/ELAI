@@ -66,14 +66,6 @@ class vector
 public:
   typedef Coef range;
 
-#ifdef ELAI_USE_PYTHON
-  void init(int m)
-  {
-    m_ = m;
-    init();
-  }
-#endif
-
   vector() : m_( 0 ), f_( NULL ), mem_( 0 ) {}
   vector( const int m ) : m_( m ), f_( NULL ), mem_( 0 ) { init(); }
   vector( const int m, range *f ) : m_( m ), f_( NULL ), mem_( 0 )
