@@ -109,6 +109,13 @@ import_array();
 
 %}
 
+%extend elai::linear_function< elai::Element, elai::Neighbour, double > {
+    inline void setVector(const Element& x, double val)
+    {
+        (*$self)(x) = val;
+    }
+}
+
 namespace std {
     %template(vectorInt) vector<int>;
 };
