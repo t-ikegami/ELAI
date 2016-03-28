@@ -35,7 +35,6 @@ Options for related software:
     When you installed to not default directory /usr, use below options to
     pass ./configure.
 
-        --with-elai=PATH
         --with-mpi=PATH
         --with-mpi4py=PATH
         --with-numpy=PATH
