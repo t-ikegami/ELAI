@@ -23,7 +23,7 @@ distclean: clean
 	rm Patches/mumps-makefile.inc Patches/scalapack-slmake.inc
 	rm -f Makefile
 
-install:
+install: all
 	: # Do nothing.
 
 uninstall:
