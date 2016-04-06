@@ -90,7 +90,6 @@ private:
   template< class Lhs, class Op, class Rhs >
   void eval( const expression< Lhs, Op, Rhs >& expr )
   {
-    int k = 0;
     for ( int i = 0; i < m_; ++i )
     {
       for ( int k = ind_[ i ]; k < ind_[ i + 1 ]; ++k )
@@ -629,7 +628,7 @@ public:
     std::getline( is, header );
     if ( header.find( "coordinate" ) != std::string::npos )
     {
-      int m, n, nnz;
+      int m, n, nnz = 0;
 
       while ( nnz == 0 )
       {

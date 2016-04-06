@@ -75,7 +75,7 @@ public:
     MPI_Comm_rank( comm_, &rank_ );
 #endif
   }
-  ~lu()
+  virtual ~lu()
   {}
 
   bool factor()

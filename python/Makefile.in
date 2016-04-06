@@ -22,7 +22,7 @@ INC_DIRS        = $(ELAI_INC_DIR) $(MPI4PY_INC_DIR) $(NUMPY_INC_DIR)
 all: aml
 
 aml: clean elai.i setup.py
-	CC=$(CC) CXX=$(CXX) CFLAGS="$(CFLAGS)" python setup.py --includes="$(INC_DIRS)" build_ext --swig-cpp -i
+	CC=$(CC) CXX=$(CXX) CFLAGS="$(CFLAGS)" python setup.py --includes="$(INC_DIRS)" build_ext -i
 
 clean:
 	rm -rf build elai.py *.pyc *_wrap.cpp $(TARGET)

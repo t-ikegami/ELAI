@@ -44,7 +44,7 @@ public:
   preconditioner( const matrix< Range >& A )
     : A_( A )
   {}
-  ~preconditioner() {}
+  virtual ~preconditioner() {}
 
   void forward( vector< Range >& x ) const     // x -> L^-1 x
   {

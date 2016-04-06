@@ -37,7 +37,7 @@ public:
 #endif // ELAI_FLATNESTED
   class Element
   {
-    const int i_, c_;
+    int i_, c_;
 
   public:
     typedef long long id_type;
@@ -73,8 +73,8 @@ public:
     Adjacency adj_;
 
   public:
-    typedef typename Adjacency::iterator iterator;
-    typedef typename Adjacency::const_iterator const_iterator;
+    typedef Adjacency::iterator iterator;
+    typedef Adjacency::const_iterator const_iterator;
 
     Neighbour( int i, int c ) : x_( Element( i, c ) ) { adj_.insert( x_ ); }
     Neighbour( const Element& x ) : x_( x ) { adj_.insert( x_ ); }

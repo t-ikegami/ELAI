@@ -188,7 +188,7 @@ public:
     , coherent_( coherent )
 #endif
   {}
-  ~ksp() {}
+  virtual ~ksp() {}
 
   int iter_max() const { return iter_max_; }
   int iter_max( int max )

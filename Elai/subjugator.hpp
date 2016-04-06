@@ -173,8 +173,6 @@ private:
       int send_cols[ cnt_recv_elms ];
       for ( int i = 0, off = 0; i < cnt_recv_regs; ++i )
       {
-        int rid = recv_regs[ i ];
-
         for ( int j = 0; j < recv_nums[ i ]; ++j )
         {
           send_cols[ off ] = color_[ base_.index( Element( recv_elms[ off ] ) ) ];
