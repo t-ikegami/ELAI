@@ -1,0 +1,142 @@
+#                                               -*- Autoconf -*-
+# Process this file with autoconf to produce a configure script.
+
+AC_PREREQ([2.65])
+AC_INIT([FULL-PACKAGE-NAME], [VERSION], [BUG-REPORT-ADDRESS])
+AC_CONFIG_SRCDIR([config.h.in])
+AC_CONFIG_HEADERS([config.h])
+
+AC_LANG([C++])
+
+# Checks for programs.
+AC_PROG_CXX
+AC_PROG_CC
+AC_PROG_LN_S
+AC_PROG_MAKE_SET
+AC_PROG_RANLIB
+
+CC=mpicc
+CXX=mpic++
+
+AC_CHECK_PROG(icc_found, icc, icc, no)
+if test "$icc_found" != "icc"; then with_gcc=yes; fi
+
+AC_MSG_CHECKING([for --with-gcc])
+AC_ARG_WITH(
+    gcc,
+    AS_HELP_STRING([--with-gcc], [use gcc]),
+    [
+        case $withval in
+        no)     whth_gcc=no;;
+        yes)    with_gcc=yes;;
+        *)      with_gcc=no;;
+        esac
+    ]
+)
+AC_MSG_RESULT($with_gcc)
+if test "x$with_gcc" = "x"; then whth_gcc=no; fi
+
+AC_SUBST(MPICC)
+AC_CHECK_PROG(MPICC, mpicc, mpicc, no)
+AS_IF([test $MPICC != mpicc ],
+    [AC_MSG_ERROR([
+        Cannot find mpicc command. Check your command path.], [1])])
+AC_SUBST(MPICXX)
+AC_CHECK_PROG(MPICXX, mpic++, mpic++, no)
+AS_IF([test $MPICXX != mpic++ ],
+    [AC_MSG_ERROR([
+        Cannot find mpic++ command. Check your command path.], [1])])
+
+# Checks for header files.
+AC_CHECK_HEADERS([stdlib.h string.h strings.h unistd.h])
+
+# Checks for typedefs, structures, and compiler characteristics.
+AC_HEADER_STDBOOL
+AC_C_INLINE
+AC_C_RESTRICT
+AC_TYPE_SIZE_T
+
+# Checks for library functions.
+AC_FUNC_MALLOC
+AC_FUNC_STRTOD
+AC_CHECK_FUNCS([bzero memset mkdir sqrt strstr strtol])
+
+AC_CHECK_PROG(HAS_PYTHON, python, found, not-found)
+AS_IF([test $HAS_PYTHON != found],
+    [AC_MSG_ERROR([
+        Cannot find python. Please install Python 2.7 or later.], [1])])
+PYTHON_VERSION=`python -c 'import sysconfig;print sysconfig.get_config_var("py_version_short")'`
+
+AC_ARG_WITH(blas,
+    [AS_HELP_STRING([--with-blas=PATH],
+        [specify prefix directory for installed BLAS package.])])
+
+AC_ARG_WITH(elai,
+    [AS_HELP_STRING([--with-elai=PATH],
+        [specify prefix directory for installed ELAI package.])])
+
+AC_ARG_WITH(mpi,
+    [AS_HELP_STRING([--with-mpi=PATH],
+        [specify prefix directory for installed MPI package.])])
+
+AC_ARG_WITH(mpi-include,
+    [AS_HELP_STRING([--with-mpi-include=PATH],
+        [specify directory for installed MPI include files.])])
+
+if test -n "$with_blas"
+then
+    BLAS_LIB_DIR="$with_blas/lib"
+else
+    BLAS_LIB_DIR=""
+fi
+
+BLAS_LIBS="-lmkl_rt -limf -lifcore"
+CXX_LIBS=""
+LD=mpic++
+if test "$with_gcc" = "yes"
+then
+    BLAS_LIBS="-lblas"
+    CXX_LIBS="-lstdc++"
+    LD=mpif90
+fi
+
+if test -n "$with_elai"
+then
+    ELAI_INC_DIR="$with_elai/include"
+    ELAI_LIB_DIR="$with_elai/lib"
+else
+    . ${ELAI_INC_DIR:="$ac_default_prefix/include"}
+    . ${ELAI_LIB_DIR:="$ac_default_prefix/lib"}
+fi
+
+CXXFLAGS_orig="$CXXFLAGS"
+CXXFLAGS="$CXXFLAGS -I./swig -I$ELAI_INC_DIR"
+have_elai=yes
+AC_MSG_CHECKING([for exist file of elai.h])
+AC_TRY_COMPILE(
+    [#include <stddef.h>
+#include <elai.h>
+],
+    [],
+    [AC_MSG_RESULT([yes])],
+    [AC_MSG_RESULT([no]); have_elai=no])
+AS_IF([test $have_elai != yes],
+    [AC_MSG_ERROR([Cannot find ELAI. Please install ELAI 0.6.2 or later and
+pass --with-elai flag to ./configure.])]
+)
+CXXFLAGS="$CXXFLAGS_orig"
+
+AC_SUBST(CC)
+AC_SUBST(CXX)
+AC_SUBST(LD)
+AC_SUBST(BLAS_LIB_DIR)
+AC_SUBST(BLAS_LIBS)
+AC_SUBST(CXX_LIBS)
+AC_SUBST(ELAI_INC_DIR)
+AC_SUBST(ELAI_LIB_DIR)
+
+AC_CONFIG_FILES([
+    Makefile
+])
+
+AC_OUTPUT

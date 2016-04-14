@@ -1,9 +1,9 @@
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-Enexss Linear Algebra Interface (ELAI)
+Elastic Linear Algebra Interface (ELAI)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 ------------------------------------------------------------------------
-Copyright 2013-2015 H. KOSHIMOTO, AIST
+Copyright 2013-2016 H. KOSHIMOTO, AIST
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -18,8 +18,8 @@ See the License for the specific language governing permissions and
 limitations under the License.
 ------------------------------------------------------------------------
 
-VERSION: 0.6.2
-DATE   : 21 JAN '16
+VERSION: 0.6.3
+DATE   : 14 APR 2016
 LICENSE: Apache License Version 2.0
 
 0. ABOUT

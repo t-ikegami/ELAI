@@ -1,6 +1,6 @@
 /*
  *
- * Enexss Linear Algebra Interface (ELAI)
+ * Elastic Linear Algebra Interface (ELAI)
  *
  * Copyright 2013-2015 H. KOSHIMOTO, AIST
  *

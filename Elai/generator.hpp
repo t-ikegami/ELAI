@@ -1,6 +1,6 @@
 /*
  *
- * Enexss Linear Algebra Interface (ELAI)
+ * Elastic Linear Algebra Interface (ELAI)
  *
  * Copyright 2013-2015 H. KOSHIMOTO, AIST
  *
@@ -73,8 +73,14 @@ public:
     Adjacency adj_;
 
   public:
+
+#ifdef ELAI_FLATNESTED
     typedef Adjacency::iterator iterator;
     typedef Adjacency::const_iterator const_iterator;
+#else // ELAI_FLATNESTED
+    typedef typename Adjacency::iterator iterator;
+    typedef typename Adjacency::const_iterator const_iterator;
+#endif // ELAI_FLATNESTED
 
     Neighbour( int i, int c ) : x_( Element( i, c ) ) { adj_.insert( x_ ); }
     Neighbour( const Element& x ) : x_( x ) { adj_.insert( x_ ); }

@@ -1,6 +1,6 @@
 /*
  *
- * Enexss Linear Algebra Interface (ELAI)
+ * Elastic Linear Algebra Interface (ELAI)
  *
  * Copyright 2013-2015 H. KOSHIMOTO, AIST
  *
@@ -211,6 +211,8 @@ public:
   {
     if ( mumps_.jcn != NULL ) { delete [] mumps_.jcn; mumps_.jcn = NULL; }
     if ( mumps_.irn != NULL ) { delete [] mumps_.irn; mumps_.irn = NULL; }
+    mumps_.job = JOB_END;
+    Mumps::call( &mumps_ );
   }
 };
 

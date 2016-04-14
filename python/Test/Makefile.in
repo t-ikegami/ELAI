@@ -1,0 +1,47 @@
+ELAI_INC_DIR = @ELAI_INC_DIR@
+ELAI_LIB_DIR = @ELAI_LIB_DIR@
+ELAI_LIBS = -ldmumps -lmumps_common -lscalapack -lmetis -lpord
+BLAS_LIB_DIR = @BLAS_LIB_DIR@
+BLAS_LIBS = @BLAS_LIBS@
+CXX_LIBS = @CXX_LIBS@
+MPI_LIBS = -lmpi_mpifh -lmpi_usempi -lmpi_cxx
+CC      = mpic++
+LD      = @LD@
+CFLAGS  = -W -O3 -DELAI_USE_MUMPS -DELAI_USE_MPI $(OPTIMIZE_FLAGS)
+LDFLAGS = 
+INCLUDE = -I$(ELAI_INC_DIR)
+LIBS    = -L$(ELAI_LIB_DIR) -Wl,-Bstatic $(ELAI_LIBS) -Wl,-Bdynamic $(CXX_LIBS) $(BLAS_LIB_DIR) $(BLAS_LIBS) $(MPI_LIBS)
+TARGET  = solv
+OBJS    = solver.o
+
+.PHONY: all clean distclean test1 test2 test3 demo
+
+all: $(TARGET)
+$(TARGET): $(OBJS)
+	$(LD) $(LDFLAGS) -o $@ $^ $(LIBS)
+
+.cc.o:
+	$(CC) $(CFLAGS) $(INCLUDE) -c $<
+
+clean:
+	rm -f $(TARGET) $(OBJS)
+
+distclean: clean
+	rm -rf autom4te.cache
+	rm -f Makefile config.log config.status
+
+test1: $(TARGET)
+	CTHRES=1e-08 FLEVEL=1 FTHRES=1e-08 STHRES=1e-05 KSP="SPBCGS" \
+	mpiexec -n 1 $(TARGET) A1.mtx b1.mtx 2>&1
+test2: $(TARGET)
+	CTHRES=1e-08 FLEVEL=1 FTHRES=1e-10 STHRES=1e-05 KSP="SPBCGSA" \
+	mpiexec -n 1 $(TARGET) A2.mtx b2.mtx 2>&1
+test3: $(TARGET)
+	CTHRES=1e-08 FLEVEL=1 FTHRES=1e-08 STHRES=1e-05 KSP="LU" \
+	mpiexec -n 2 $(TARGET) A2.mtx b2.mtx 2>&1
+test4: $(TARGET)
+	CTHRES=1e-08 FLEVEL=1 FTHRES=1e-08 STHRES=1e-05 KSP="SPGMRES" \
+	mpiexec -n 2 $(TARGET) A1.mtx b1.mtx 2>&1
+demo: $(TARGET)
+	CTHRES=1e-08 FLEVEL=1 FTHRES=1e-08 STHRES=1e-05 KSP="LU" \
+	mpiexec -n 2 $(TARGET)
