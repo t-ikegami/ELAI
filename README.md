@@ -19,13 +19,13 @@ ELAI includes but not limited to the following functionalities.
 
 Following libraries are required to use ELAI:
 - MPI
-  We have tested with OpenMPI 1.6.5)
+  (We have tested with OpenMPI 1.6.5)
 - [MUMPS 5.0.1](http://mumps.enseeiht.fr)
   BLAS, LAPACK, and ScaLAPACK are also required.
 - [METIS 5.1.0](http://glaros.dtc.umn.edu/gkhome/metis/metis/overview)
 
 ## License
-Copyright 2013-2015 H. KOSHIMOTO, AIST
+Copyright 2013-2016 H. KOSHIMOTO, AIST
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.

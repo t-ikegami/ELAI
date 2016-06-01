@@ -7,7 +7,7 @@ libdir = prefix + '/lib'
 
 include_dirs = [np.get_include()]
 s_opts = ['-c++', '-builtin']
-libs = ['dmumps', 'mumps_common', 'scalapack', 'metis', 'pord', @ELAI_LIBS@, 'mpi_mpifh']
+libs = ['dmumps', 'mumps_common', 'scalapack', 'metis', 'pord', @ELAI_LIBS@]
 lib_dirs = [
     libdir,
 ]
