@@ -110,7 +110,9 @@ def run(A, x, b):
     printResult(A, x, b)
 
 def direct(A, x, b):
-    lu = elai.ElaiMumpsDouble(A, MPI.COMM_WORLD)
+    opt = elai.mumps_options()
+    opt.debug = 2
+    lu = elai.ElaiMumpsDouble(A, MPI.COMM_WORLD, opt)
     lu.factor()
     lu.solve(b, x)
     if MPI.COMM_WORLD.Get_rank() == 0:

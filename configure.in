@@ -104,8 +104,8 @@ ELAI_LIBS="'mkl_rt', 'ifcore'"
 BLAS_LIB="-lmkl_rt"
 LAPACK_LIB=
 RANLIB_CMD="echo"
-FORTRAN_OPT="-DALLOW_NON_INIT -nofort_main"
-LD_OPT="-nofor_main"
+FORTRAN_OPT="-DALLOW_NON_INIT -nofor-main"
+LD_OPT="-nofor-main"
 if test "$with_gcc" = "yes"
 then
     ELAI_LIBS="'blas'"
