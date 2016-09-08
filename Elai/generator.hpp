@@ -87,12 +87,14 @@ public:
     Neighbour( const Neighbour& u ) : x_( u.x_ ), adj_( u.adj_ ) {}
     ~Neighbour() {}
 
+#if 0
     Neighbour& operator=( const Neighbour& src )
     {
       if ( this == &src ) return *this;
       if ( x_ == src.x_ ) adj_ = src.adj_;
       return *this;
     }
+#endif
 
     const Element& element() const { return x_; }
     int size() const { return adj_.size(); }

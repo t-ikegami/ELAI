@@ -73,12 +73,40 @@ public:
   MPI_Datatype type;
   mpi_() : type( MPI_INT ) {}
 };
-template<> class mpi_< long long >
+template<> class mpi_< long >
 {
 public:
   MPI_Datatype type;
   mpi_() : type( MPI_LONG ) {}
 };
+#ifdef MPI_LONG_LONG  
+template<> class mpi_< long long >
+{
+public:
+  MPI_Datatype type;
+  mpi_() : type( MPI_LONG_LONG ) {}
+};
+#endif
+template<> class mpi_< unsigned >
+{
+public:
+  MPI_Datatype type;
+  mpi_() : type( MPI_UNSIGNED ) {}
+};
+template<> class mpi_< unsigned long >
+{
+public:
+  MPI_Datatype type;
+  mpi_() : type( MPI_UNSIGNED_LONG ) {}
+};
+#ifdef MPI_UNSIGNED_LONG_LONG  
+template<> class mpi_< unsigned long long >
+{
+public:
+  MPI_Datatype type;
+  mpi_() : type( MPI_UNSIGNED_LONG_LONG ) {}
+};
+#endif
 template<> class mpi_< float >
 {
 public:

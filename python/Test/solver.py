@@ -37,13 +37,13 @@ def solve(A, x, b, coherent = None):
         ratio = A.scaleRatio()
 
     if arg.precondition:
-        # prec = elai.ElaiIluDouble(A, arg.flevel, arg.fthres, False)
-        prec = elai.ElaiIluDouble(A, arg.flevel, arg.fthres)
+        # prec = elai.IluDouble(A, arg.flevel, arg.fthres, False)
+        prec = elai.IluDouble(A, arg.flevel, arg.fthres)
         prec.factor()
 
-    svr = elai.ElaiBicgstabDouble(A, b, prec, coherent)		if arg.method == 'bicgstab' else \
-          elai.ElaiBicgsafeDouble(A, b, prec, coherent)		if arg.method == 'bicgsafe' else \
-          elai.ElaiGmresDouble   (A, b, prec, coherent)		if arg.method == 'gmres'    else \
+    svr = elai.BicgstabDouble(A, b, prec, coherent)		if arg.method == 'bicgstab' else \
+          elai.BicgsafeDouble(A, b, prec, coherent)		if arg.method == 'bicgsafe' else \
+          elai.GmresDouble   (A, b, prec, coherent)		if arg.method == 'gmres'    else \
           None
     assert(svr != None)
 
@@ -60,7 +60,7 @@ def solve(A, x, b, coherent = None):
         print('SCAL: ' + str(ratio) + ' (' + str(rnorm) + ', ' + str(cnorm) + ')')
 
 def printResult(A, x, b):
-    res = elai.ElaiVectorDouble(x)
+    res = elai.VectorDouble(x)
     elai.mul(A, x, res)
     elai.minus(res, b, res)
     r = elai.mul(res, res)
@@ -73,14 +73,14 @@ def printResult(A, x, b):
 
 def solve_dist(A, U, V, ranks):
     myrank = MPI.COMM_WORLD.Get_rank()
-    loc = elai.ElaiSubjugatorDouble(A.dom(), A.topo(), ranks)
-    base = elai.ElaiSpaceDouble(loc(myrank))
-    topo = elai.ElaiFamilyDouble(loc(myrank, base))
-    a = elai.ElaiOperatorDouble(base, topo)
-    u = elai.ElaiFunctionDouble(base)
-    v = elai.ElaiFunctionDouble(base)
-    coherent = elai.ElaiCoherenceDouble(u, MPI.COMM_WORLD)
-    sync = elai.ElaiSyncDouble(U, MPI.COMM_WORLD)
+    loc = elai.SubjugatorDouble(A.dom(), A.topo(), ranks)
+    base = elai.SpaceDouble(loc(myrank))
+    topo = elai.FamilyDouble(loc(myrank, base))
+    a = elai.OperatorDouble(base, topo)
+    u = elai.FunctionDouble(base)
+    v = elai.FunctionDouble(base)
+    coherent = elai.CoherenceDouble(u, MPI.COMM_WORLD)
+    sync = elai.SyncDouble(U, MPI.COMM_WORLD)
 
     a.reflectIn(A, loc)
     u.reflectIn(U, loc)
@@ -91,12 +91,12 @@ def solve_dist(A, U, V, ranks):
     sync()
 
 def run_dist(A, x, b):
-    gen = elai.ElaiGeneratorDouble(A)
+    gen = elai.GeneratorDouble(A)
     base = gen.space()
     topo = gen.family()
-    a = elai.ElaiOperatorDouble(base, base, topo, A)
-    u = elai.ElaiFunctionDouble(base, x)
-    v = elai.ElaiFunctionDouble(base, b)
+    a = elai.OperatorDouble(base, base, topo, A)
+    u = elai.FunctionDouble(base, x)
+    v = elai.FunctionDouble(base, b)
     ranks = elai.NewStdVector(range(MPI.COMM_WORLD.Get_size()))
     solve_dist(a, u, v, ranks)
     if MPI.COMM_WORLD.Get_rank() == 0:
@@ -112,7 +112,13 @@ def run(A, x, b):
 def direct(A, x, b):
     opt = elai.mumps_options()
     opt.debug = 2
-    lu = elai.ElaiMumpsDouble(A, MPI.COMM_WORLD, opt)
+    opt.iter = 0
+    opt.work = 20
+    opt.pivot_quality = 0.01
+    opt.pivot_dynamic = 0.0
+    opt.pivot_static = -1.0
+    opt.pivot_fixation = 0.0
+    lu = elai.MumpsDouble(A, MPI.COMM_WORLD, opt)
     lu.factor()
     lu.solve(b, x)
     if MPI.COMM_WORLD.Get_rank() == 0:
@@ -122,8 +128,8 @@ def direct(A, x, b):
 def demo():
     nnd = 16
     color = 0
-    mesh = elai.ElaiSpaceDouble()
-    topo = elai.ElaiFamilyDouble()
+    mesh = elai.SpaceDouble()
+    topo = elai.FamilyDouble()
     for i in range(nnd):
         n = elai.Element(i, color)
         mesh.join(n)
@@ -138,9 +144,9 @@ def demo():
             lnk.join(elai.Element(i + 4, color))
         topo.join(lnk)
 
-    problem = elai.ElaiOperatorDouble(mesh, topo)
-    solution = elai.ElaiFunctionDouble(mesh)
-    inhomogeneous = elai.ElaiFunctionDouble(mesh)
+    problem = elai.OperatorDouble(mesh, topo)
+    solution = elai.FunctionDouble(mesh)
+    inhomogeneous = elai.FunctionDouble(mesh)
 
     for i in range(nnd):
         problem.setMatrix(elai.Element(i, color), -4)
@@ -171,9 +177,9 @@ if arg.afile is None or arg.bfile is None:
     demo()
     exit(0)
 
-A = elai.ElaiMatrixDouble(elai.ProxyIfstream(arg.afile))
-b = elai.ElaiVectorDouble(elai.ProxyIfstream(arg.bfile))
-x = elai.ElaiVectorDouble(b.m())
+A = elai.MatrixDouble(elai.ProxyIfstream(arg.afile))
+b = elai.VectorDouble(elai.ProxyIfstream(arg.bfile))
+x = elai.VectorDouble(b.m())
 
 imax = A.m() / 5
 if arg.method == 'mumps':

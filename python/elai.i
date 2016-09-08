@@ -57,31 +57,26 @@ import_array();
 %include <Elai/mumps.hpp>
 %include "std_vector.i"
 
-%template(ElaiMatrixDouble) elai::matrix<double>;
-%template(ElaiVectorDouble) elai::vector<double>;
-%template(ElaiKspDouble) elai::ksp<double>;
-%template(ElaiBicgstabDouble) elai::bicgstab<double>;
-%template(ElaiBicgsafeDouble) elai::bicgsafe<double>;
-%template(ElaiGmresDouble) elai::gmres<double>;
-%template(ElaiIluDouble)    elai::ilu<double>;
-%template(ElaiGeneratorDouble) elai::generator<double>;
-%template(ElaiFunctionDouble) elai::linear_function< elai::Element, elai::Neighbour, double >;
-%template(ElaiSubjugatorDouble) elai::subjugator< elai::Element, elai::Neighbour >;
-%template(ElaiOperatorDouble) elai::linear_operator< elai::Element, elai::Neighbour, double >;
-%template(ElaiSpaceDouble) elai::space<elai::Element>;
-%template(ElaiFamilyDouble) elai::family<elai::Element, elai::Neighbour>;
-%template(ElaiLuDouble)    elai::lu<double>;
-%template(ElaiMumpsDouble) elai::mumps<double>;
-
-%extend elai::coherence {
-    %template(ElaiCoherenceDouble) coherence<elai::linear_function< elai::Element, elai::Neighbour, double >>;
-};
-
-%extend elai::sync {
-    %template(ElaiSyncDouble) sync<elai::linear_function< elai::Element, elai::Neighbour, double >>;
-};
+%template(MatrixDouble) elai::matrix<double>;
+%template(VectorDouble) elai::vector<double>;
+%template(KspDouble) elai::ksp<double>;
+%template(BicgstabDouble) elai::bicgstab<double>;
+%template(BicgsafeDouble) elai::bicgsafe<double>;
+%template(GmresDouble) elai::gmres<double>;
+%template(IluDouble)    elai::ilu<double>;
+%template(GeneratorDouble) elai::generator<double>;
+%template(FunctionDouble) elai::linear_function< elai::Element, elai::Neighbour, double >;
+%template(SubjugatorDouble) elai::subjugator< elai::Element, elai::Neighbour >;
+%template(OperatorDouble) elai::linear_operator< elai::Element, elai::Neighbour, double >;
+%template(SpaceDouble) elai::space<elai::Element>;
+%template(FamilyDouble) elai::family<elai::Element, elai::Neighbour>;
+%template(LuDouble)    elai::lu<double>;
+%template(MumpsDouble) elai::mumps<double>;
+%template(CoherenceDouble) elai::coherence::coherence<elai::linear_function< elai::Element, elai::Neighbour, double >>;
+%template(SyncDouble) elai::sync::sync<elai::linear_function< elai::Element, elai::Neighbour, double >>;
 %rename(__call__) elai::sync::operator();
 
+/*
 %inline %{
     elai::generator<double>::Matrix* ElaiCastToMatrixDouble(elai::matrix<double>* ptr)
     {
@@ -108,6 +103,7 @@ import_array();
     }
 
 %}
+*/
 
 %extend elai::linear_function< elai::Element, elai::Neighbour, double > {
     inline void setVector(const Element& x, double val)

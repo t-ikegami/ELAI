@@ -78,6 +78,8 @@ private:
 
     scalR_.setup( m_ );
     scalC_.setup( n_ );
+    scalR_ = static_cast< range >( 1. );
+    scalC_ = static_cast< range >( 1. );
   }
 
   void terminate()
@@ -85,6 +87,9 @@ private:
     if ( c_ != NULL ) { delete [] c_; c_ = NULL; }
     if ( col_ != NULL ) { delete [] col_; col_ = NULL; }
     if ( ind_ != NULL ) { delete [] ind_; ind_ = NULL; }
+    scalR_.terminate();
+    scalC_.terminate();
+    m_ = n_ = nnz_ = mem_ = 0;
   }
 
   template< class Lhs, class Op, class Rhs >
@@ -102,30 +107,30 @@ private:
 
 public:
   matrix()
-    : m_( 0 ), n_( 0 ), nnz_( 0 )
+    : m_( -1 ), n_( 0 ), nnz_( 0 )		// ind_ has to be allocated if m_ = 0.
     , ind_( NULL ), col_( NULL ), c_( NULL ), z_( 0 )
-    , mem_( 0 ), scalR_(), scalC_() {}
+    , mem_( 0 ), scalR_(), scalC_() {}			
   matrix( int m, int n, int nnz, int *ind, int *col, range *c = NULL )
     : m_( m ), n_( n ), nnz_( nnz )
     , ind_( NULL ), col_( NULL ), c_( NULL ), z_( 0 )
-    , mem_( 0 ), scalR_( m_ ), scalC_( n_ )
+    , mem_( 0 ), scalR_(), scalC_()
   {
     init();
     for ( int i = 0; i <= m_; ++i ) ind_[ i ] = ind[ i ];
     for ( int i = 0; i < nnz_; ++i ) col_[ i ] = col[ i ];
     if ( c != NULL ) for ( int i = 0; i < nnz_; ++i ) c_[ i ] = c[ i ];
-    for ( int i = 0; i < m_; ++i ) scalR_( i ) = static_cast< range >( 1. );
-    for ( int j = 0; j < n_; ++j ) scalC_( j ) = static_cast< range >( 1. );
   }
   matrix( const matrix< range >& src )
     : m_( src.m_ ), n_( src.n_ ), nnz_( src.nnz_ )
     , ind_( NULL ), col_( NULL ), c_( NULL ), z_( 0 )
-    , mem_( src.mem_ ), scalR_( src.scalR_ ), scalC_( src.scalC_ )
+    , mem_(0), scalR_(), scalC_()
   {
     init();
     for ( int i = 0; i <= m_; ++i ) ind_[ i ] = src.ind_[ i ];
     for ( int i = 0; i < nnz_; ++i ) col_[ i ] = src.col_[ i ];
     for ( int i = 0; i < nnz_; ++i ) c_[ i ] = src.c_[ i ];
+    scalR_ = src.scalR_;
+    scalC_ = src.scalC_;
   }
   matrix( std::istream& is )
     : m_( 0 ), n_( 0 ), nnz_( 0 )
@@ -135,57 +140,56 @@ public:
     std::string header;
 
     std::getline( is, header );
-    if ( header.find( "coordinate" ) != std::string::npos )
-    {
-      int m, n, nnz = 0;
-
-      while ( nnz == 0 )
-      {
-        std::string buf;
-
-        std::getline( is, buf );
-        if ( buf.find( "%" ) != std::string::npos ) continue;
-
-        std::stringstream ss( buf );
-
-        ss >> m >> n >> nnz;
-      }
-      m_ = m; n_ = n;; nnz_ = nnz;
-      init();
-      int *cnt, *row, *col;
-      range *val;
-      cnt = new int[ m_ ];
-      for ( int i = 0; i < m_; ++i ) cnt[ i ] = 0;
-      row = new int[ nnz_ ];
-      col = new int[ nnz_ ];
-      val = new range[ nnz_ ];
-      for ( int i = 0; i < nnz_; ++i )
-      {
-        is >> row[ i ] >> col[ i ] >> val[ i ];
-        row[ i ] -= 1;
-        col[ i ] -= 1;
-        cnt[ row[ i ] ] += 1;
-      }
-      for ( int i = 0; i < m_; ++i ) ind_[ i + 1 ] = cnt[ i ] + ind_[ i ];
-      for ( int i = 0; i < m_; ++i ) cnt[ i ] = 0;
-      for ( int k = 0; k < nnz_; ++k )
-      {
-        // ROW/COL WISE IS NOT A MATTER, BUT ASCENDING ORDER IS NECESSARY.
-        int i = row[ k ], j = col[ k ];
-        col_[ ind_[ i ] + cnt[ i ] ] = j;
-        c_[ ind_[ i ] + cnt[ i ] ] = val[ k ];
-        cnt[ i ] += 1;
-      }
-      delete [] val;
-      delete [] col;
-      delete [] row;
-      delete [] cnt;
-    }
-    else
+    if ( header.find( "coordinate" ) == std::string::npos )
     {
       std::cerr << "ELAI ALLOWS ONLY THE COORDINATE STYLE FOR MATRICES. SORRY." << std::endl;
       std::abort();
     }
+
+    int m, n, nnz = 0;
+
+    while ( nnz == 0 )
+    {
+      std::string buf;
+      
+      std::getline( is, buf );
+      if ( buf.find( "%" ) != std::string::npos ) continue;
+      
+      std::stringstream ss( buf );
+      
+      ss >> m >> n >> nnz;
+    }
+    m_ = m; n_ = n;; nnz_ = nnz;
+    init();
+    int *cnt, *row, *col;
+    range *val;
+    cnt = new int[ m_ ];
+    for ( int i = 0; i < m_; ++i ) cnt[ i ] = 0;
+    row = new int[ nnz_ ];
+    col = new int[ nnz_ ];
+    val = new range[ nnz_ ];
+    for ( int i = 0; i < nnz_; ++i )
+    {
+      is >> row[ i ] >> col[ i ] >> val[ i ];
+      row[ i ] -= 1;
+      col[ i ] -= 1;
+      cnt[ row[ i ] ] += 1;
+    }
+    for ( int i = 0; i < m_; ++i ) ind_[ i + 1 ] = cnt[ i ] + ind_[ i ];
+    for ( int i = 0; i < m_; ++i ) cnt[ i ] = 0;
+    for ( int k = 0; k < nnz_; ++k )
+    {
+      // ROW/COL WISE IS NOT A MATTER, BUT ASCENDING ORDER IS NECESSARY.
+      int i = row[ k ], j = col[ k ];
+      col_[ ind_[ i ] + cnt[ i ] ] = j;
+      c_[ ind_[ i ] + cnt[ i ] ] += val[ k ];
+      cnt[ i ] += 1;
+    }
+    delete [] val;
+    delete [] col;
+    delete [] row;
+    delete [] cnt;
+
   }
   template< class Lhs, class Op, class Rhs >
   matrix( const expression< Lhs, Op, Rhs >& expr ) : m_( expr.m() ), n_( expr.n() ), nnz_( expr.nnz() )
@@ -202,6 +206,20 @@ public:
   {
     terminate();
   }
+  friend void swap(matrix< range > &first, matrix< range > &second)
+  {
+    using std::swap;
+
+    swap(first.m_,     second.m_);
+    swap(first.n_,     second.n_);
+    swap(first.nnz_,   second.nnz_);
+    swap(first.ind_,   second.ind_);
+    swap(first.col_,   second.col_);
+    swap(first.c_,     second.c_);
+    swap(first.mem_,   second.mem_);
+    swap(first.scalR_, second.scalR_);
+    swap(first.scalC_, second.scalC_);
+  }
 
   matrix< range >& setup( int m, int n, int nnz, int *ind, int *col, range *c = NULL )
   {
@@ -217,19 +235,18 @@ public:
 
   matrix< range >& operator=( const range c )
   {
+#ifdef ELAI_USE_OPENMP
+    #pragma omp parallel for
+#endif
     for ( int i = 0; i < m_; ++i )
     {
       for ( int k = ind_[ i ]; k < ind_[ i + 1 ]; ++k ) c_[ k ] = c;
     }
     return *this;
   }
-  matrix< range >& operator=( const matrix< range >& rhs )
+  matrix< range >& operator=( matrix< range > rhs )
   {
-    assert( m_ == rhs.m_ && n_ == rhs.n_ && nnz_ == rhs.nnz_ );
-    for ( int i = 0; i < m_; ++i )
-    {
-      for ( int k = ind_[ i ]; k < ind_[ i + 1 ]; ++k ) c_[ k ] = rhs( i, col_[ k ] );
-    }
+    swap(*this, rhs);
     return *this;
   }
   template< class Lhs, class Op, class Rhs >
@@ -240,22 +257,23 @@ public:
     return *this;
   }
 
-  int m() const { return m_; }
-  int n() const { return n_; }
-  int nnz() const { return nnz_; }
+  inline int m() const { return m_; }
+  inline int n() const { return n_; }
+  inline int nnz() const { return nnz_; }
+  inline range &zero() { return z_; }
 
   // FOR EXPRESSIONS, DO NOT TOUCH!
-  int ind( int i ) const { return ind_[ i ]; }
-  int col( int k ) const { return col_[ k ]; }
-  range val( int k ) const { return c_[ k ]; }
+  inline int ind( int i ) const { return ind_[ i ]; }
+  inline int col( int k ) const { return col_[ k ]; }
+  inline range val( int k ) const { return c_[ k ]; }
 
   // FOR ONLY MUMPS, OTHERS DO NOT TOUCH!!
-  int *ind() { return ind_; }
-  const int *ind() const { return ind_; }
-  int *col() { return col_; }
-  const int *col() const { return col_; }
-  range *val() { return c_; }
-  const range *val() const { return c_; }
+  inline int *ind() { return ind_; }
+  inline const int *ind() const { return ind_; }
+  inline int *col() { return col_; }
+  inline const int *col() const { return col_; }
+  inline range *val() { return c_; }
+  inline const range *val() const { return c_; }
 
   range& operator()( int i, int j )
   {
@@ -626,37 +644,35 @@ public:
     std::string header;
 
     std::getline( is, header );
-    if ( header.find( "coordinate" ) != std::string::npos )
-    {
-      int m, n, nnz = 0;
-
-      while ( nnz == 0 )
-      {
-        std::string buf;
-
-        std::getline( is, buf );
-        if ( buf.find( "%" ) != std::string::npos ) continue;
-
-        std::stringstream ss( buf );
-
-        ss >> m >> n >> nnz;
-      }
-      if ( m_ != m || n_ != n || nnz_ != nnz )
-      {
-        std::cerr << "YOUR MM-FILE HAS UNMATCHED SIZE FOR THE MATRIX." << std::endl;
-        std::abort();
-      }
-      for ( int k = 0; k < nnz_; ++k )
-      {
-        int i, j; range v;
-        is >> i >> j >> v;
-        ( *this )( i - 1, j - 1 ) = v;
-      }
-    }
-    else
+    if ( header.find( "coordinate" ) == std::string::npos )
     {
       std::cerr << "ELAI ALLOWS ONLY THE COORDINATE STYLE FOR MATRICES. SORRY." << std::endl;
       std::abort();
+    }
+
+    int m, n, nnz = 0;
+
+    while ( nnz == 0 )
+    {
+      std::string buf;
+      
+      std::getline( is, buf );
+      if ( buf.find( "%" ) != std::string::npos ) continue;
+
+      std::stringstream ss( buf );
+
+      ss >> m >> n >> nnz;
+    }
+    if ( m_ != m || n_ != n || nnz_ != nnz )
+    {
+      std::cerr << "YOUR MM-FILE HAS UNMATCHED SIZE FOR THE MATRIX." << std::endl;
+      std::abort();
+    }
+    for ( int k = 0; k < nnz_; ++k )
+    {
+      int i, j; range v;
+      is >> i >> j >> v;
+      ( *this )( i - 1, j - 1 ) = v;
     }
 
     return *this;

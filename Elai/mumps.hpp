@@ -71,7 +71,7 @@ template <> struct mumps_impl < std::complex < double > >
 
 struct mumps_options {
 public:
-  int    par, sym, debug, iter, stat, work;
+  int    par, sym, debug, iter, stat, work, bcast;
   double pivot_quality, pivot_dynamic, pivot_static, pivot_fixation;
 
   mumps_options() :
@@ -81,6 +81,7 @@ public:
     iter(2),		// number of iterative refinement
     stat(0),		// perform error analysis: 0:none, 1:expensive, 2:moderate
     work(30),		// percentage increase of estimated working space (default: 20)
+    bcast(0),		// whether or not the solution vector is bcasted over all ranks
     pivot_quality(1e-05),	// Numerical Pivot Quality (default: 0.01)
     pivot_dynamic(1e-17),	// Dynamic Pivot Threshold (default: 0.0)
     pivot_static(1e-20),	// Static Pivot Threshold  (default: -1.0)
@@ -97,6 +98,7 @@ class mumps : public lu< Coef >
   typedef typename Mumps::type MumpsType;
 
   MumpsType mumps_;
+  int bcast_;
 
   bool factor_()
   {
@@ -122,6 +124,11 @@ class mumps : public lu< Coef >
     }
     Mumps::call( &mumps_ );
 
+    if ( 0 <= mumps_.INFOG(1) && bcast_ ) {
+      MPI_Comm comm = MPI_Comm_f2c(mumps_.comm_fortran);
+      MPI_Bcast( x.val(), x.m(), mpi_<Coef>().type, 0, comm );
+    }
+    
     return 0 <= mumps_.INFOG( 1 );
   }
 
@@ -130,6 +137,7 @@ public:
     : lu< Coef >( A, comm ), mumps_()
   {
     // Initialize
+    bcast_ = opt.bcast;
     mumps_.job = JOB_INIT;
     mumps_.par = opt.par;
     mumps_.sym = opt.sym;

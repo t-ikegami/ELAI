@@ -30,8 +30,13 @@ namespace elai
 {
 
 template< class Coef >
+class matrix;
+  
+template< class Coef >
 class vector
 {
+  friend class matrix< Coef >;
+  
   int m_;
   Coef *f_;
   size_t mem_;
@@ -76,6 +81,9 @@ public:
   vector( const vector< range >& src ) : m_( src.m_ ), f_( NULL ), mem_( 0 )
   {
     init();
+#ifdef ELAI_USE_OPENMP
+    #pragma omp parallel for
+#endif
     for ( int i = 0; i < m_; ++i ) f_[ i ] = src.f_[ i ];
   }
   vector( std::istream& is ) : m_( 0 ), f_( NULL ), mem_( 0 )
@@ -153,7 +161,13 @@ public:
   {
     terminate();
   }
-
+  friend void swap(vector< range > &first, vector< range > &second)
+  {
+    using std::swap;
+    swap(first.m_,   second.m_);
+    swap(first.f_,   second.f_);
+    swap(first.mem_, second.mem_);
+  }
   void setup( int m )
   {
     terminate();
@@ -169,13 +183,9 @@ public:
     for ( int i = 0; i < m_; ++i ) f_[ i ] = v;
     return *this;
   }
-  vector< range >& operator=( const vector< range >& rhs )
+  vector< range >& operator=( vector< range > rhs )
   {
-    assert( m_ == rhs.m_ );
-#ifdef ELAI_USE_OPENMP
-    #pragma omp parallel for
-#endif
-    for ( int i = 0; i < m_; ++i ) f_[ i ] = rhs.f_[ i ];
+    swap(*this, rhs);
     return *this;
   }
   template< class Lhs, class Op, class Rhs >
@@ -185,15 +195,15 @@ public:
     return *this;
   }
 
-  int m() const { return m_; }
-  int n() const { return 1; }
-  int nnz() const { return m_; }
+  inline int m() const { return m_; }
+  inline int n() const { return 1; }
+  inline int nnz() const { return m_; }
 
   // FOR EXPRESSIONS, DO NOT TOUCH!
-  int ind( int i ) const { return i; }
-  int col( int k ) const { return 0; }
-  range *val() { return f_; }
-  const range *val() const { return f_; }
+  inline int ind( int i ) const { return i; }
+  inline int col( int k ) const { return 0; }
+  inline range *val() { return f_; }
+  inline const range *val() const { return f_; }
 
   range& operator()( int i )
   {
