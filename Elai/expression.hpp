@@ -36,42 +36,42 @@ public:
 
   expression( const Lhs& lhs, const Rhs& rhs ) : lhs_( lhs ), rhs_( rhs ) {}
 
-  int m() const { return lhs_.m(); }
-  int n() const { return lhs_.n(); }
-  int nnz() const { return lhs_.nnz(); }
-  int ind( int i ) const { return lhs_.ind( i ); }
-  int col( int k ) const { return lhs_.col( k ); }
-  range operator()() const { return Op::apply( lhs_, rhs_ ); }
-  range operator()( int i ) const { return Op::apply( lhs_( i ), rhs_( i ) ); }
-  range operator()( int i, int j ) const { return Op::apply( lhs_( i, j ), rhs_( i, j ) ); }
+  inline int m() const { assert( lhs_.m() == rhs_.m() );  return lhs_.m(); }
+  inline int n() const { assert( lhs_.n() == rhs_.n() );  return lhs_.n(); }
+  inline int nnz() const { assert( lhs_.nnz() == rhs_.nnz() );  return lhs_.nnz(); }
+  inline int ind( int i ) const { return lhs_.ind( i ); }  // identity is not checked
+  inline int col( int k ) const { return lhs_.col( k ); }  // identity is not checked
+  inline range operator()() const { return Op::apply( lhs_, rhs_ ); }
+  inline range operator()( int i ) const { return Op::apply( lhs_( i ), rhs_( i ) ); }
+  inline range operator()( int i, int j ) const { return Op::apply( lhs_( i, j ), rhs_( i, j ) ); }
 };
 
 template< class Coef >
 struct expression_add
 {
   typedef Coef range;
-  static range apply( range lhs, range rhs ) { return lhs + rhs; }
+  inline static range apply( range lhs, range rhs ) { return lhs + rhs; }
 };
 
 template< class Coef >
 struct expression_sub
 {
   typedef Coef range;
-  static range apply( range lhs, range rhs ) { return lhs - rhs; }
+  inline static range apply( range lhs, range rhs ) { return lhs - rhs; }
 };
 
 template< class Coef >
 struct expression_mul
 {
   typedef Coef range;
-  static range apply( range lhs, range rhs ) { return lhs * rhs; }
+  inline static range apply( range lhs, range rhs ) { return lhs * rhs; }
 };
 
 template< class Coef >
 struct expression_hat
 {
   typedef Coef range;
-  static range apply( range lhs, range rhs ) { return lhs * rhs; }
+  inline static range apply( range lhs, range rhs ) { return lhs * rhs; }
 };
 
 //
@@ -79,13 +79,13 @@ struct expression_hat
 //
 template< class Lhs, class Rhs >
 expression< Lhs, expression_add< typename Lhs::range >, Rhs >
-operator+( const Lhs& lhs, const Rhs& rhs )
+inline operator+( const Lhs& lhs, const Rhs& rhs )
 { return expression< Lhs, expression_add< typename Lhs::range >, Rhs >( lhs, rhs );
 }
 
 template< class Rhs >
 expression< typename Rhs::range, expression_add< typename Rhs::range>, Rhs >
-operator+( const typename Rhs::range& lhs, const Rhs& rhs )
+inline operator+( const typename Rhs::range& lhs, const Rhs& rhs )
 { return expression< typename Rhs::range, expression_add< typename Rhs::range >, Rhs >(lhs, rhs); }
 
 
@@ -94,13 +94,13 @@ operator+( const typename Rhs::range& lhs, const Rhs& rhs )
 //
 template< class Lhs, class Rhs >
 expression< Lhs, expression_sub< typename Lhs::range >, Rhs >
-operator-( const Lhs& lhs, const Rhs& rhs )
+inline operator-( const Lhs& lhs, const Rhs& rhs )
 { return expression< Lhs, expression_sub< typename Lhs::range >, Rhs >( lhs, rhs );
 }
 
 template< class Rhs >
 expression< typename Rhs::range, expression_sub< typename Rhs::range>, Rhs >
-operator-( const typename Rhs::range& lhs, const Rhs& rhs )
+inline operator-( const typename Rhs::range& lhs, const Rhs& rhs )
 { return expression< typename Rhs::range, expression_sub< typename Rhs::range >, Rhs >(lhs, rhs); }
 
 
@@ -109,13 +109,13 @@ operator-( const typename Rhs::range& lhs, const Rhs& rhs )
 //
 template< class Lhs, class Rhs >
 expression< Lhs, expression_mul< typename Lhs::range >, Rhs >
-operator*( const Lhs& lhs, const Rhs& rhs )
+inline operator*( const Lhs& lhs, const Rhs& rhs )
 { return expression< Lhs, expression_mul< typename Lhs::range >, Rhs >( lhs, rhs );
 }
 
 template< class Rhs >
 expression< typename Rhs::range, expression_mul< typename Rhs::range>, Rhs >
-operator*( const typename Rhs::range& lhs, const Rhs& rhs )
+inline operator*( const typename Rhs::range& lhs, const Rhs& rhs )
 { return expression< typename Rhs::range, expression_mul< typename Rhs::range >, Rhs >(lhs, rhs); }
 
 
@@ -125,13 +125,13 @@ operator*( const typename Rhs::range& lhs, const Rhs& rhs )
 //
 template< class Lhs, class Rhs >
 expression< Lhs, expression_hat< typename Lhs::range >, Rhs >
-operator^( const Lhs& lhs, const Rhs& rhs )
+inline operator^( const Lhs& lhs, const Rhs& rhs )
 { return expression< Lhs, expression_hat< typename Lhs::range >, Rhs >( lhs, rhs );
 }
 
 template< class Rhs >
 expression< typename Rhs::range, expression_hat< typename Rhs::range>, Rhs >
-operator^( const typename Rhs::range& lhs, const Rhs& rhs )
+inline operator^( const typename Rhs::range& lhs, const Rhs& rhs )
 { return expression< typename Rhs::range, expression_hat< typename Rhs::range >, Rhs >(lhs, rhs); }
 
 */

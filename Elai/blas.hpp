@@ -40,14 +40,14 @@ public:
 
   expression( const Lhs lhs, const Rhs& rhs ) : lhs_( lhs ), rhs_( rhs ) {}
 
-  int m() const { return rhs_.m(); }
-  int n() const { return rhs_.n(); }
-  int nnz() const { return rhs_.nnz(); }
-  int ind( int i ) const { return rhs_.ind( i ); }
-  int col( int k ) const { return rhs_.col( k ); }
-  range operator()() const { return Op::apply( lhs_, rhs_ ); }
-  range operator()( int i ) const { return Op::apply( lhs_, rhs_( i ) ); }
-  range operator()( int i, int j ) const { return Op::apply( lhs_, rhs_( i, j ) ); }
+  inline int m() const { return rhs_.m(); }
+  inline int n() const { return rhs_.n(); }
+  inline int nnz() const { return rhs_.nnz(); }
+  inline int ind( int i ) const { return rhs_.ind( i ); }
+  inline int col( int k ) const { return rhs_.col( k ); }
+  inline range operator()() const { return Op::apply( lhs_, rhs_ ); }
+  inline range operator()( int i ) const { return Op::apply( lhs_, rhs_( i ) ); }
+  inline range operator()( int i, int j ) const { return Op::apply( lhs_, rhs_( i, j ) ); }
 };
 
 template< class Lhs, class Op >
@@ -63,130 +63,16 @@ public:
 
   expression( const Lhs& lhs, const Rhs rhs ) : lhs_( lhs ), rhs_( rhs ) {}
 
-  int m() const { return lhs_.m(); }
-  int n() const { return lhs_.n(); }
-  int nnz() const { return lhs_.nnz(); }
-  int ind( int i ) const { return lhs_.ind( i ); }
-  int col( int k ) const { return lhs_.col( k ); }
-  range operator()() const { return Op::apply( lhs_, rhs_ ); }
-  range operator()( int i ) const { return Op::apply( lhs_(i), rhs_ ); }
-  range operator()( int i, int j ) const { return Op::apply( lhs_(i, j), rhs_ ); }
+  inline int m() const { return lhs_.m(); }
+  inline int n() const { return lhs_.n(); }
+  inline int nnz() const { return lhs_.nnz(); }
+  inline int ind( int i ) const { return lhs_.ind( i ); }
+  inline int col( int k ) const { return lhs_.col( k ); }
+  inline range operator()() const { return Op::apply( lhs_, rhs_ ); }
+  inline range operator()( int i ) const { return Op::apply( lhs_(i), rhs_ ); }
+  inline range operator()( int i, int j ) const { return Op::apply( lhs_(i, j), rhs_ ); }
 };
 
-// vector( i ) + scalar -> vector( i )
-template< class Coef >
-class expression
-  < vector< Coef >
-  , expression_add< Coef >
-  , Coef
-  >
-{
-  typedef vector< Coef > Lhs;
-  typedef Coef Rhs;
-  const Lhs& lhs_;
-  const Rhs rhs_;
-public:
-  typedef Coef range;
-  expression( const Lhs& lhs, const Rhs rhs ) : lhs_( lhs ), rhs_( rhs ) {}
-  int m() const { return lhs_.m(); }
-  int n() const { return 1; }
-  int nnz() const { return lhs_.nnz(); }
-  int ind( int i ) const { return lhs_.ind( i ); }
-  int col( int k ) const { return lhs_.col( k ); }
-  range operator()( int i ) const { return lhs_( i ) + rhs_; }
-};
-
-// vector( i ) + vector( i ) -> vector( i )
-template< class Coef >
-class expression
-  < vector< Coef >
-  , expression_add< Coef >
-  , vector< Coef >
-  >
-{
-  typedef vector< Coef > Lhs;
-  typedef vector< Coef> Rhs;
-  const Lhs& lhs_;
-  const Rhs& rhs_;
-public:
-  typedef Coef range;
-  expression( const Lhs& lhs, const Rhs& rhs ) : lhs_( lhs ), rhs_( rhs ) {}
-  int m() const { assert( lhs_.m() == rhs_.m() ); return lhs_.m(); }
-  int n() const { return 1; }
-  int nnz() const { return lhs_.nnz(); }
-  int ind( int i ) const { return lhs_.ind( i ); }
-  int col( int k ) const { return lhs_.col( k ); }
-  range operator()( int i ) const { return lhs_( i ) + rhs_( i ); }
-};
-
-// vector( i ) - scalar -> vector( i )
-template< class Coef >
-class expression
-  < vector< Coef >
-  , expression_sub< Coef >
-  , Coef
-  >
-{
-  typedef vector< Coef > Lhs;
-  typedef Coef Rhs;
-  const Lhs& lhs_;
-  const Rhs rhs_;
-public:
-  typedef Coef range;
-  expression( const Lhs& lhs, const Rhs rhs ) : lhs_( lhs ), rhs_( rhs ) {}
-  int m() const { return lhs_.m(); }
-  int n() const { return 1; }
-  int nnz() const { return lhs_.nnz(); }
-  int ind( int i ) const { return lhs_.ind( i ); }
-  int col( int k ) const { return lhs_.col( k ); }
-  range operator()( int i ) const { return lhs_( i ) - rhs_; }
-};
-
-// vector( i ) - vector( i ) -> vector( i )
-template< class Coef >
-class expression
-  < vector< Coef >
-  , expression_sub< Coef >
-  , vector< Coef >
-  >
-{
-  typedef vector< Coef > Lhs;
-  typedef vector< Coef> Rhs;
-  const Lhs& lhs_;
-  const Rhs& rhs_;
-public:
-  typedef Coef range;
-  expression( const Lhs& lhs, const Rhs& rhs ) : lhs_( lhs ), rhs_( rhs ) {}
-  int m() const { assert( lhs_.m() == rhs_.m() ); return lhs_.m(); }
-  int n() const { return 1; }
-  int nnz() const { return lhs_.nnz(); }
-  int ind( int i ) const { return lhs_.ind( i ); }
-  int col( int k ) const { return lhs_.col( k ); }
-  range operator()( int i ) const { return lhs_( i ) - rhs_( i ); }
-};
-
-// vector( i ) * scalar -> vector( i )
-template< class Coef >
-class expression
-  < vector< Coef >
-  , expression_mul< Coef >
-  , Coef
-  >
-{
-  typedef vector< Coef > Lhs;
-  typedef Coef Rhs;
-  const Lhs& lhs_;
-  const Rhs rhs_;
-public:
-  typedef Coef range;
-  expression( const Lhs& lhs, const Rhs rhs ) : lhs_( lhs ), rhs_( rhs ) {}
-  int m() const { return rhs_.m(); }
-  int n() const { return 1; }
-  int nnz() const { return lhs_.nnz(); }
-  int ind( int i ) const { return lhs_.ind( i ); }
-  int col( int k ) const { return lhs_.col( k ); }
-  range operator()( int i ) const { return lhs_( i ) * rhs_; }
-};
 
 // vector( i ) * vector( i ) -> scalar( R )
 template< class Coef >
@@ -275,74 +161,6 @@ public:
 };
 */
 
-// matrix( i, j ) * scalar -> matrix( i, j )
-template< class Coef >
-class expression
-  < matrix< Coef >
-  , expression_mul< Coef >
-  , Coef
-  >
-{
-  typedef matrix< Coef > Lhs;
-  typedef Coef Rhs;
-  const Lhs& lhs_;
-  const Rhs rhs_;
-public:
-  typedef Coef range;
-  expression( const Lhs& lhs, const Rhs rhs ) : lhs_( lhs ), rhs_( rhs ) {}
-  int m() const { return lhs_.m(); }
-  int n() const { return lhs_.n(); }
-  int nnz() const { return lhs_.nnz(); }
-  int ind( int i ) const { return lhs_.ind( i ); }
-  int col( int k ) const { return lhs_.col( k ); }
-  range operator()( int i, int j ) const { return lhs_( i, j ) * rhs_; }
-};
-
-// matrix( i, j ) + matrix( i, j ) -> matrix( i, j )
-template< class Coef >
-class expression
-  < matrix< Coef >
-  , expression_add< Coef >
-  , matrix< Coef >
-  >
-{
-  typedef matrix< Coef > Lhs;
-  typedef matrix< Coef > Rhs;
-  const Lhs& lhs_;
-  const Rhs& rhs_;
-public:
-  typedef Coef range;
-  expression( const Lhs& lhs, const Rhs& rhs ) : lhs_( lhs ), rhs_( rhs ) {}
-  int m() const { return lhs_.m(); }
-  int n() const { return lhs_.n(); }
-  int nnz() const { return lhs_.nnz(); }
-  int ind( int i ) const { return lhs_.ind( i ); }
-  int col( int k ) const { return lhs_.col( k ); }
-  range operator()( int i, int j ) const { return lhs_( i, j ) + rhs_( i, j ); }
-};
-
-// matrix( i, j ) - matrix( i, j ) -> matrix( i, j )
-template< class Coef >
-class expression
-  < matrix< Coef >
-  , expression_sub< Coef >
-  , matrix< Coef >
-  >
-{
-  typedef matrix< Coef > Lhs;
-  typedef matrix< Coef > Rhs;
-  const Lhs& lhs_;
-  const Rhs& rhs_;
-public:
-  typedef Coef range;
-  expression( const Lhs& lhs, const Rhs& rhs ) : lhs_( lhs ), rhs_( rhs ) {}
-  int m() const { return lhs_.m(); }
-  int n() const { return lhs_.n(); }
-  int nnz() const { return lhs_.nnz(); }
-  int ind( int i ) const { return lhs_.ind( i ); }
-  int col( int k ) const { return lhs_.col( k ); }
-  range operator()( int i, int j ) const { return lhs_( i, j ) - rhs_( i, j ); }
-};
 
 // matrix( i, j ) * vector( j ) -> vector( i )
 template< class Coef >
@@ -375,6 +193,13 @@ public:
   }
 };
 
+
+// try to cause error for matrix( i, j ) +/- scalar
+template< class Coef > class expression< matrix<Coef>, expression_add<Coef>, Coef > {};
+template< class Coef > class expression< matrix<Coef>, expression_sub<Coef>, Coef > {};
+template< class Coef > class expression< Coef, expression_add<Coef>, matrix<Coef> > {};
+template< class Coef > class expression< Coef, expression_sub<Coef>, matrix<Coef> > {};
+  
 }
 
 #endif//__ELAI_BLAS__
