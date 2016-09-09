@@ -33,7 +33,7 @@
 #endif
 
 #define ELAI_MAJOR 0.6
-#define ELAI_MINOR 3
+#define ELAI_MINOR 4
 #define ELAI_VERSION ELAI_MAJOR.ELAIMINOR
 
 #if 201112L <= __STDC_VERSION__

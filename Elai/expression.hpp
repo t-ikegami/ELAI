@@ -84,28 +84,10 @@ operator+( const Lhs& lhs, const Rhs& rhs )
 }
 
 template< class Rhs >
-expression< float, expression_add< float >, Rhs >
-operator+( const float& lhs, const Rhs& rhs )
-{ return expression< float, expression_add< float >, Rhs >( lhs, rhs );
-}
+expression< typename Rhs::range, expression_add< typename Rhs::range>, Rhs >
+operator+( const typename Rhs::range& lhs, const Rhs& rhs )
+{ return expression< typename Rhs::range, expression_add< typename Rhs::range >, Rhs >(lhs, rhs); }
 
-template< class Rhs >
-expression< double, expression_add< double >, Rhs >
-operator+( const double& lhs, const Rhs& rhs )
-{ return expression< double, expression_add< double >, Rhs >( lhs, rhs );
-}
-
-template< class Rhs >
-expression< std::complex< float >, expression_add< std::complex< float > >, Rhs >
-operator+( const std::complex< float >& lhs, const Rhs& rhs )
-{ return expression< std::complex< float >, expression_add< std::complex< float > >, Rhs >( lhs, rhs );
-}
-
-template< class Rhs >
-expression< std::complex< double >, expression_add< std::complex< double > >, Rhs >
-operator+( const std::complex< double >& lhs, const Rhs& rhs )
-{ return expression< std::complex< double >, expression_add< std::complex< double > >, Rhs >( lhs, rhs );
-}
 
 //
 // operator-
@@ -117,28 +99,10 @@ operator-( const Lhs& lhs, const Rhs& rhs )
 }
 
 template< class Rhs >
-expression< float, expression_sub< float >, Rhs >
-operator-( const float& lhs, const Rhs& rhs )
-{ return expression< float, expression_sub< float >, Rhs >( lhs, rhs );
-}
+expression< typename Rhs::range, expression_sub< typename Rhs::range>, Rhs >
+operator-( const typename Rhs::range& lhs, const Rhs& rhs )
+{ return expression< typename Rhs::range, expression_sub< typename Rhs::range >, Rhs >(lhs, rhs); }
 
-template< class Rhs >
-expression< double, expression_sub< double >, Rhs >
-operator-( const double& lhs, const Rhs& rhs )
-{ return expression< double, expression_sub< double >, Rhs >( lhs, rhs );
-}
-
-template< class Rhs >
-expression< std::complex< float >, expression_sub< std::complex< float > >, Rhs >
-operator-( const std::complex< float >& lhs, const Rhs& rhs )
-{ return expression< std::complex< float >, expression_sub< std::complex< float > >, Rhs >( lhs, rhs );
-}
-
-template< class Rhs >
-expression< std::complex< double >, expression_sub< std::complex< double > >, Rhs >
-operator-( const std::complex< double >& lhs, const Rhs& rhs )
-{ return expression< std::complex< double >, expression_sub< std::complex< double > >, Rhs >( lhs, rhs );
-}
 
 //
 // operator*
@@ -150,28 +114,10 @@ operator*( const Lhs& lhs, const Rhs& rhs )
 }
 
 template< class Rhs >
-expression< float, expression_mul< float >, Rhs >
-operator*( const float& lhs, const Rhs& rhs )
-{ return expression< float, expression_mul< float >, Rhs >( lhs, rhs );
-}
+expression< typename Rhs::range, expression_mul< typename Rhs::range>, Rhs >
+operator*( const typename Rhs::range& lhs, const Rhs& rhs )
+{ return expression< typename Rhs::range, expression_mul< typename Rhs::range >, Rhs >(lhs, rhs); }
 
-template< class Rhs >
-expression< double, expression_mul< double >, Rhs >
-operator*( const double& lhs, const Rhs& rhs )
-{ return expression< double, expression_mul< double >, Rhs >( lhs, rhs );
-}
-
-template< class Rhs >
-expression< std::complex< float >, expression_mul< std::complex< float > >, Rhs >
-operator*( const std::complex< float >& lhs, const Rhs& rhs )
-{ return expression< std::complex< float >, expression_mul< std::complex< float > >, Rhs >( lhs, rhs );
-}
-
-template< class Rhs >
-expression< std::complex< double >, expression_mul< std::complex< double > >, Rhs >
-operator*( const std::complex< double >& lhs, const Rhs& rhs )
-{ return expression< std::complex< double >, expression_mul< std::complex< double > >, Rhs >( lhs, rhs );
-}
 
 /*
 //
@@ -184,28 +130,10 @@ operator^( const Lhs& lhs, const Rhs& rhs )
 }
 
 template< class Rhs >
-expression< float, expression_hat< float >, Rhs >
-operator^( const float& lhs, const Rhs& rhs )
-{ return expression< float, expression_hat< float >, Rhs >( lhs, rhs );
-}
+expression< typename Rhs::range, expression_hat< typename Rhs::range>, Rhs >
+operator^( const typename Rhs::range& lhs, const Rhs& rhs )
+{ return expression< typename Rhs::range, expression_hat< typename Rhs::range >, Rhs >(lhs, rhs); }
 
-template< class Rhs >
-expression< double, expression_hat< double >, Rhs >
-operator^( const double& lhs, const Rhs& rhs )
-{ return expression< double, expression_hat< double >, Rhs >( lhs, rhs );
-}
-
-template< class Rhs >
-expression< std::complex< float >, expression_hat< std::complex< float > >, Rhs >
-operator^( const std::complex< float >& lhs, const Rhs& rhs )
-{ return expression< std::complex< float >, expression_hat< std::complex< float > >, Rhs >( lhs, rhs );
-}
-
-template< class Rhs >
-expression< std::complex< double >, expression_hat< std::complex< double > >, Rhs >
-operator^( const std::complex< double >& lhs, const Rhs& rhs )
-{ return expression< std::complex< double >, expression_hat< std::complex< double > >, Rhs >( lhs, rhs );
-}
 */
 
 }

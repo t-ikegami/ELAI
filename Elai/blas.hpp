@@ -28,15 +28,15 @@ namespace elai
 {
 
 template< class Op, class Rhs >
-class expression< float, Op, Rhs >
+class expression< typename Rhs::range, Op, Rhs >
 {
-  typedef float Lhs;
+  typedef typename Rhs::range Lhs;
 
   const Lhs lhs_;
   const Rhs& rhs_;
 
 public:
-  typedef float range;
+  typedef Lhs range;
 
   expression( const Lhs lhs, const Rhs& rhs ) : lhs_( lhs ), rhs_( rhs ) {}
 
@@ -50,73 +50,27 @@ public:
   range operator()( int i, int j ) const { return Op::apply( lhs_, rhs_( i, j ) ); }
 };
 
-template< class Op, class Rhs >
-class expression< double, Op, Rhs >
+template< class Lhs, class Op >
+class expression< Lhs, Op, typename Lhs::range >
 {
-  typedef double Lhs;
+  typedef typename Lhs::range Rhs;
 
-  const Lhs lhs_;
-  const Rhs& rhs_;
+  const Lhs& lhs_;
+  const Rhs rhs_;
 
 public:
-  typedef float range;
+  typedef Rhs range;
 
-  expression( const Lhs lhs, const Rhs& rhs ) : lhs_( lhs ), rhs_( rhs ) {}
+  expression( const Lhs& lhs, const Rhs rhs ) : lhs_( lhs ), rhs_( rhs ) {}
 
-  int m() const { return rhs_.m(); }
-  int n() const { return rhs_.n(); }
-  int nnz() const { return rhs_.nnz(); }
-  int ind( int i ) const { return rhs_.ind( i ); }
-  int col( int k ) const { return rhs_.col( k ); }
+  int m() const { return lhs_.m(); }
+  int n() const { return lhs_.n(); }
+  int nnz() const { return lhs_.nnz(); }
+  int ind( int i ) const { return lhs_.ind( i ); }
+  int col( int k ) const { return lhs_.col( k ); }
   range operator()() const { return Op::apply( lhs_, rhs_ ); }
-  range operator()( int i ) const { return Op::apply( lhs_, rhs_( i ) ); }
-  range operator()( int i, int j ) const { return Op::apply( lhs_, rhs_( i, j ) ); }
-};
-
-template< class Op, class Rhs >
-class expression< std::complex< float >, Op, Rhs >
-{
-  typedef std::complex< float > Lhs;
-
-  const Lhs lhs_;
-  const Rhs& rhs_;
-
-public:
-  typedef float range;
-
-  expression( const Lhs& lhs, const Rhs& rhs ) : lhs_( lhs ), rhs_( rhs ) {}
-
-  int m() const { return rhs_.m(); }
-  int n() const { return rhs_.n(); }
-  int nnz() const { return rhs_.nnz(); }
-  int ind( int i ) const { return rhs_.ind( i ); }
-  int col( int k ) const { return rhs_.col( k ); }
-  range operator()() const { return Op::apply( lhs_, rhs_ ); }
-  range operator()( int i ) const { return Op::apply( lhs_, rhs_( i ) ); }
-  range operator()( int i, int j ) const { return Op::apply( lhs_, rhs_( i, j ) ); }
-};
-
-template< class Op, class Rhs >
-class expression< std::complex< double >, Op, Rhs >
-{
-  typedef std::complex< double > Lhs;
-
-  const Lhs lhs_;
-  const Rhs& rhs_;
-
-public:
-  typedef float range;
-
-  expression( const Lhs& lhs, const Rhs& rhs ) : lhs_( lhs ), rhs_( rhs ) {}
-
-  int m() const { return rhs_.m(); }
-  int n() const { return rhs_.n(); }
-  int nnz() const { return rhs_.nnz(); }
-  int ind( int i ) const { return rhs_.ind( i ); }
-  int col( int k ) const { return rhs_.col( k ); }
-  range operator()() const { return Op::apply( lhs_, rhs_ ); }
-  range operator()( int i ) const { return Op::apply( lhs_, rhs_( i ) ); }
-  range operator()( int i, int j ) const { return Op::apply( lhs_, rhs_( i, j ) ); }
+  range operator()( int i ) const { return Op::apply( lhs_(i), rhs_ ); }
+  range operator()( int i, int j ) const { return Op::apply( lhs_(i, j), rhs_ ); }
 };
 
 // vector( i ) + scalar -> vector( i )
