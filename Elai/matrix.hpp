@@ -95,19 +95,21 @@ private:
   template< class Lhs, class Op, class Rhs >
   void eval( const expression< Lhs, Op, Rhs >& expr )
   {
+#ifdef ELAI_USE_OPENMP
+    #pragma omp parallel for
+#endif
     for ( int i = 0; i < m_; ++i )
     {
       for ( int k = ind_[ i ]; k < ind_[ i + 1 ]; ++k )
       {
         c_[ k ] = expr( i, col_[ k ] );
-        ++k;
       }
     }
   }
 
 public:
   matrix()
-    : m_( -1 ), n_( 0 ), nnz_( 0 )		// ind_ has to be allocated if m_ = 0.
+    : m_( -1 ), n_( 0 ), nnz_( 0 )		// ind_ has to be allocated if m_ 
     , ind_( NULL ), col_( NULL ), c_( NULL ), z_( 0 )
     , mem_( 0 ), scalR_(), scalC_() {}			
   matrix( int m, int n, int nnz, int *ind, int *col, range *c = NULL )
@@ -195,12 +197,9 @@ public:
   matrix( const expression< Lhs, Op, Rhs >& expr ) : m_( expr.m() ), n_( expr.n() ), nnz_( expr.nnz() )
   {
     init();
-    for ( int i = m_; 0 <= i; --i )
-    {
-      ind_[ i ] = expr.ind( i );
-      if ( i < m_ ) for ( int k = ind_[ i ]; k < ind_[ i + 1 ]; ++k ) col_[ k ] = expr.col( k );
-    }
-    eval( expr );
+    for( int i = 0; i <= m_; i++)  ind_[i] = expr.ind(i);
+    for( int k = 0; k < nnz_; k++) col_[k] = expr.col(k);
+    eval(expr);
   }
   ~matrix()
   {
